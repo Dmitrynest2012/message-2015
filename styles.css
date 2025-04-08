@@ -634,13 +634,13 @@ body.in-posyl .settings-popup {
 
 /* Контейнер уведомления */
 .notification-container {
-    position: fixed;
+    position: absolute; /* Изменяем с fixed на absolute */
     left: 50%;
-    bottom: -100px; /* Начальная позиция ниже экрана */
+    bottom: -100px; /* Начальная позиция ниже контейнера */
     transform: translateX(-50%);
     width: 400px;
     padding: 15px 20px;
-    background-color: rgba(20, 20, 20, 0.9); /* Почти черный с прозрачностью */
+    background-color: rgba(20, 20, 20, 0.9);
     border-radius: 15px;
     display: flex;
     align-items: center;
@@ -649,6 +649,16 @@ body.in-posyl .settings-popup {
     z-index: 100;
     opacity: 0;
     transition: all 0.5s ease-in-out;
+}
+
+.notification-container.visible {
+    bottom: 10px; /* Поднимается чуть выше нижней границы контейнера */
+    opacity: 1;
+}
+
+.notification-container.exiting {
+    bottom: 100%; /* Уходит вверх внутри контейнера */
+    opacity: 0;
 }
 
 /* Иконка вращающихся стрелок */
@@ -670,13 +680,3 @@ body.in-posyl .settings-popup {
     100% { transform: rotate(360deg); }
 }
 
-/* Состояние видимости уведомления */
-.notification-container.visible {
-    bottom: 50%; /* Поднимается до середины */
-    opacity: 1;
-}
-
-.notification-container.exiting {
-    bottom: 100%; /* Уходит вверх за пределы экрана */
-    opacity: 0;
-}
