@@ -19,7 +19,7 @@ const outsideMusic = [
     { src: "music/MANTRA.mp3", title: "MANTRA (Artist 3)" }
     // Добавьте больше песен по необходимости
 ];
-const dailyPosylMusic = { src: "music/Bolero.mp3", title: "Daily Posyl (Daily Artist)" };
+const dailyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
 const hourlyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
 const bellSound = { src: "sound_of_a_bell.mp3" }; // Добавляем звук колокола
 const notificationSound = { src: "sound_of_notification.mp3" }; // Предполагается, что файл существует
