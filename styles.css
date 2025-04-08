@@ -553,18 +553,18 @@ body.in-posyl .settings-popup {
         position: absolute;
         top: calc(50vh + 20px);
         left: 0px;
-        width: calc(100% - 0px);
+        width: calc(100% - 20px);
         height: calc((20% / 1.5) * 0.6);
         padding: 10px;
         border-radius: 0px;
     }
 
     #date {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     #clock {
-        font-size: 34px;
+        font-size: 32px;
     }
 
     .clock-container h1 {
@@ -609,7 +609,8 @@ body.in-posyl .settings-popup {
     }
 
     .settings-popup {
-        width: 90%;
+        width: auto;
+        right: 10px;
         left: 10px;
         bottom: 20%;
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
@@ -621,12 +622,12 @@ body.in-posyl .settings-popup {
 
     .music-toggle {
         left: 20px;
-        bottom: 25px;
+        bottom: 45px;
     }
 
     .settings-toggle {
         right: 25px;
-        bottom: 25px;
+        bottom: 45px;
     }
 }
 
