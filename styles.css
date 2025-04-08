@@ -316,8 +316,10 @@ body {
     right: 100px;
     height: 500px; /* Добавляем фиксированную высоту */
     background-color: #3a3f4b;
+    border: 1px solid #d5a1ff17;
     border-radius: 10px;
     padding: 15px;
+    font-family: 'Play';
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
     display: none;
     z-index: 10;
@@ -690,5 +692,128 @@ body.in-posyl .settings-popup {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Замените существующие стили секций в styles.css и добавьте новые */
+
+/* Стили для секций настроек */
+.settings-section {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    background-color: rgba(200, 200, 200, 0.1); /* Сильно прозрачный светло-серый фон */
+    border: 1px solid rgba(220, 220, 220, 0.3); /* Чуть более светлые бордеры */
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
+}
+
+.section-header {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: rgba(220, 220, 220, 0.2);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.section-header:hover {
+    background-color: rgba(220, 220, 220, 0.3);
+}
+
+.section-title {
+    font-weight: bold;
+}
+
+.section-toggle {
+    transition: transform 0.4s ease-in-out; /* Увеличиваем время анимации для большей плавности */
+}
+
+.section-collapsed .section-toggle {
+    transform: rotate(-90deg); /* Стрелка вверх при сворачивании */
+}
+
+.section-content {
+    padding: 15px;
+    max-height: 400px; /* Ограничение высоты сохраняем */
+    overflow-y: hidden; /* Запрещаем вертикальный скролл */
+    transition: all 0.4s ease-in-out;
+    opacity: 1;
+    width: 100%;
+    box-sizing: border-box;
+    
+}
+
+.section-collapsed .section-content {
+    max-height: 0;
+    padding: 0 15px;
+    overflow: hidden; /* Сохраняем скрытие при свернутом состоянии */
+    opacity: 0;
+}
+
+/* Добавляем временное скрытие скроллбара во время анимации */
+.section-content.animating {
+    overflow: hidden; /* Предотвращаем появление скроллбара во время анимации */
+}
+
+/* Стили для кнопок ресурсов */
+.resource-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.resource-button {
+    display: block;
+    padding: 10px 15px;
+    background-color: #5e2a8a; /* Темно-фиолетовый дизайн */
+    color: white;
+    text-decoration: none;
+    border: 1px solid #7f16d4;
+    border-radius: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.resource-button:hover {
+    background-color: #a757e8; /* Подсветка при наведении */
+    border: 1px solid #c988ff;
+    transform: scale(1.02);
+}
+
+.resource-button:active {
+    transform: scale(0.98);
+}
+
+/* Обновление тем "Вне посыла" и "В посыле" */
+body.outside-posyl .settings-section {
+    background-color: rgba(180, 180, 255, 0.1); /* Чуть более синий оттенок для "Вне посыла" */
+    border-color: rgba(200, 200, 255, 0.3);
+}
+
+body.outside-posyl .section-header {
+    background-color: rgba(200, 200, 255, 0.2);
+}
+
+body.outside-posyl .section-header:hover {
+    background-color: rgba(200, 200, 255, 0.3);
+}
+
+body.in-posyl .settings-section {
+    background-color: rgba(255, 200, 200, 0.1); /* Чуть более теплый оттенок для "В посыле" */
+    border-color: rgba(255, 220, 220, 0.3);
+}
+
+body.in-posyl .section-header {
+    background-color: rgba(255, 220, 220, 0.2);
+}
+
+body.in-posyl .section-header:hover {
+    background-color: rgba(255, 220, 220, 0.3);
+}
+
+/* Убираем стили скроллбара, так как он больше не нужен */
+.section-content::-webkit-scrollbar {
+    display: none; /* Скрываем скроллбар в Webkit-браузерах */
 }
 

@@ -284,4 +284,69 @@ document.addEventListener("DOMContentLoaded", () => {
         // Синхронизируем громкость уведомления с колоколом
         notificationAudio.volume = window.bellVolume;
     });
+
+    // Замените код обработки секций в document.addEventListener("DOMContentLoaded", ...)
+document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const section = header.parentElement;
+        const content = section.querySelector('.section-content');
+        const isCollapsed = section.classList.contains('section-collapsed');
+
+        // Добавляем класс animating перед началом анимации
+        content.classList.add('animating');
+
+        if (isCollapsed) {
+            // Разворачивание
+            section.classList.remove('section-collapsed');
+            content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем высоту содержимого
+            content.style.opacity = '1'; // Восстанавливаем видимость
+            setTimeout(() => {
+                content.style.maxHeight = '400px'; // Возвращаем максимальную высоту после анимации
+                content.classList.remove('animating'); // Убираем класс после завершения
+            }, 400); // Соответствует времени transition
+        } else {
+            // Сворачивание
+            content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем текущую высоту перед сворачиванием
+            setTimeout(() => {
+                section.classList.add('section-collapsed');
+                content.style.maxHeight = '0';
+                content.style.opacity = '0'; // Скрываем содержимое
+                setTimeout(() => {
+                    content.classList.remove('animating'); // Убираем класс после завершения
+                }, 400); // Синхронизируем с завершением анимации
+            }, 10); // Небольшая задержка для запуска анимации
+        }
+
+        // Сохраняем состояние в localStorage
+        const sectionTitle = header.querySelector('.section-title').textContent;
+        const newCollapsedState = !isCollapsed;
+        localStorage.setItem(`section-${sectionTitle}-collapsed`, newCollapsedState);
+    });
+});
+
+// Восстановление состояния секций при загрузке
+document.querySelectorAll('.settings-section').forEach(section => {
+    const sectionTitle = section.querySelector('.section-title').textContent;
+    const isCollapsed = localStorage.getItem(`section-${sectionTitle}-collapsed`) === 'true';
+    const content = section.querySelector('.section-content');
+    
+    if (isCollapsed) {
+        section.classList.add('section-collapsed');
+        content.style.maxHeight = '0';
+        content.style.opacity = '0';
+    } else {
+        content.style.maxHeight = '400px';
+        content.style.opacity = '1';
+    }
+
+    // Обработчик transitionend для корректной работы после анимации
+    content.addEventListener('transitionend', () => {
+        if (!section.classList.contains('section-collapsed')) {
+            content.style.maxHeight = '400px';
+        }
+        // Убираем класс animating после завершения перехода
+        content.classList.remove('animating');
+    });
+});
+
 });
