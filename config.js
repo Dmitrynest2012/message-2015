@@ -14,9 +14,10 @@ const dailyPosylImage = "img/message-base-1.png";
 const hourlyPosylImage = "img/message-base-2.png";
 
 const outsideMusic = [
-    { src: "music/infinitely.mp3", title: "infinitely (Artist 1)" },
-    { src: "music/Ithilien.mp3", title: "Ithilien (Artist 2)" },
-    { src: "music/MANTRA.mp3", title: "MANTRA (Artist 3)" }
+    { src: "music/infinitely.mp3", title: "Infinitely [Keys of Moon]" },
+    { src: "music/Ithilien.mp3", title: "Ithilien [Spheriб]" },
+    { src: "music/MANTRA.mp3", title: "MANTRA [Alex-Productions]" },
+    { src: "music/Spa-Relax.mp3", title: "Spa-Relax [Alex-Productions]" }
     // Добавьте больше песен по необходимости
 ];
 const dailyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
@@ -25,7 +26,7 @@ const bellSound = { src: "sound_of_a_bell.mp3" }; // Добавляем звук
 const notificationSound = { src: "sound_of_notification.mp3" }; // Предполагается, что файл существует
 
 // Глобальные переменные громкости с дефолтными значениями
-window.defaultOutsideVolume = 0.06;
+window.defaultOutsideVolume = 0.09;
 window.defaultPosylVolume = 1.0;
 window.outsideVolume = localStorage.getItem("outsideVolume") !== null ? parseFloat(localStorage.getItem("outsideVolume")) : window.defaultOutsideVolume;
 window.dailyVolume = localStorage.getItem("dailyVolume") !== null ? parseFloat(localStorage.getItem("dailyVolume")) : window.defaultPosylVolume;
