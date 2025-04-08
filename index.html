@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Посыл</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="flame-container">
+        <video id="flame-video" loop muted>
+            <source src="flame_mini.mp4" type="video/mp4">
+            <source src="flame_mini.webm" type="video/webm">
+            <source src="flame_mini.ogv" type="video/ogg">
+            <source src="flame_mini.wmv" type="video/x-ms-wmv">
+            <source src="flame_mini.avi" type="video/x-msvideo">
+            <source src="flame_mini.mov" type="video/quicktime">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+    <div id="image-container" class="image-container">
+        <img id="dynamic-image" src="" alt="Dynamic Image">
+        <div id="song-title" class="song-title"></div>
+    </div>
+    <div class="clock-container">
+        <div id="date">Загрузка...</div>
+        <div id="clock">Загрузка...</div>
+        <h1>точное московское время</h1>
+        <div class="progress-line"></div>
+    </div>
+    <div id="message-text" class="message-container">
+        <p>Здесь будет ваш текст посыла</p>
+    </div>
+    <button id="music-toggle" class="music-toggle">🔊</button>
+    <button id="settings-toggle" class="settings-toggle">☰</button>
+    <div id="settings-popup" class="settings-popup">
+        <div class="setting-item">
+            <label for="outside-volume">Громкость музыки вне посыла:</label>
+            <input type="range" id="outside-volume" min="0" max="1" step="0.01">
+        </div>
+        <div class="setting-item">
+            <label for="daily-volume">Громкость музыки ежедневного посыла:</label>
+            <input type="range" id="daily-volume" min="0" max="1" step="0.01">
+        </div>
+        <div class="setting-item">
+            <label for="hourly-volume">Громкость музыки часового посыла:</label>
+            <input type="range" id="hourly-volume" min="0" max="1" step="0.01">
+        </div>
+        <div class="setting-item">
+            <label for="bell-toggle">Использовать звук колокола:</label>
+            <input type="checkbox" id="bell-toggle">
+        </div>
+        <div class="setting-item">
+            <label for="bell-volume">Громкость колокола:</label>
+            <input type="range" id="bell-volume" min="0" max="1" step="0.01" disabled>
+        </div>
+        <div class="setting-item">
+            <label for="flame-in-posyl">Показывать свечу в Посыле:</label>
+            <input type="checkbox" id="flame-in-posyl">
+        </div>
+        <div class="setting-item">
+            <label for="flame-outside-posyl">Показывать свечу вне Посыла:</label>
+            <input type="checkbox" id="flame-outside-posyl">
+        </div>
+        <div class="setting-item">
+            <label for="desktop-font-size">Размер шрифта Посыла на компьютере:</label>
+            <div class="font-size-control">
+                <button class="font-size-decrease" data-target="desktop-font-size">▼</button>
+                <input type="number" id="desktop-font-size" min="16" max="30" step="1">
+                <button class="font-size-increase" data-target="desktop-font-size">▲</button>
+            </div>
+        </div>
+        <div class="setting-item">
+            <label for="mobile-font-size">Размер шрифта Посыла на смартфоне:</label>
+            <div class="font-size-control">
+                <button class="font-size-decrease" data-target="mobile-font-size">▼</button>
+                <input type="number" id="mobile-font-size" min="10" max="20" step="1">
+                <button class="font-size-increase" data-target="mobile-font-size">▲</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container" class="notification-container">
+        <span class="notification-icon">⟳</span>
+        <span id="notification-text" class="notification-text"></span>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="xlsx.full.min.js"></script>
+    <script src="time.js"></script>
+    <script src="data.js"></script>
+    <script src="settings.js"></script>
+    <script src="script.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92c744ac6cb3b04d',t:'MTc0NDAwNTI0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
