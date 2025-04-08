@@ -103,8 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const scrollTop = messageContainer.scrollTop;
         const scrollHeight = messageContainer.scrollHeight;
         const clientHeight = messageContainer.clientHeight;
-        const maxOpacity = 0.2; // Максимальная прозрачность
-        const minOpacity = 0.0; // Минимальная прозрачность
+        const maxOpacity = 0.3; // Максимальная прозрачность (не меняем)
+        const minOpacity = 0.16; // Минимальная прозрачность (было 0.0, теперь 0.06)
     
         if (scrollHeight <= clientHeight) {
             // Если контента меньше высоты контейнера
@@ -115,10 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const scrollPercentage = (scrollHeight - clientHeight - scrollTop) / (scrollHeight - clientHeight);
         let newOpacity;
         if (sendStatus === "Вне Посыла") {
-            // Вне Посыла: от 0.2 (вверху) до 0.0 (внизу)
-            newOpacity = maxOpacity * scrollPercentage;
+            // Вне Посыла: от 0.2 (вверху) до 0.06 (внизу)
+            newOpacity = minOpacity + (maxOpacity - minOpacity) * scrollPercentage;
         } else {
-            // В Посыле: от 0.0 (вверху) до 0.2 (внизу)
+            // В Посыле: от 0.06 (вверху) до 0.2 (внизу)
             newOpacity = minOpacity + (maxOpacity - minOpacity) * (1 - scrollPercentage);
         }
         flameVideo.style.opacity = newOpacity;
