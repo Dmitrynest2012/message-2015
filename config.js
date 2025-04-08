@@ -32,6 +32,6 @@ window.dailyVolume = localStorage.getItem("dailyVolume") !== null ? parseFloat(l
 window.hourlyVolume = localStorage.getItem("hourlyVolume") !== null ? parseFloat(localStorage.getItem("hourlyVolume")) : window.defaultPosylVolume;
 
 // Глобальные переменные для колокола
-window.defaultBellVolume = 0.5;
-window.bellEnabled = localStorage.getItem("bellEnabled") === "true"; // true или false
+window.defaultBellVolume = 1.0; // Полная громкость по умолчанию
+window.bellEnabled = localStorage.getItem("bellEnabled") !== null ? localStorage.getItem("bellEnabled") === "true" : true; // Включено по умолчанию
 window.bellVolume = localStorage.getItem("bellVolume") !== null ? parseFloat(localStorage.getItem("bellVolume")) : window.defaultBellVolume;
