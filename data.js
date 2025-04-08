@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const scrollHeight = messageContainer.scrollHeight;
         const clientHeight = messageContainer.clientHeight;
         const maxOpacity = 0.3; // Максимальная прозрачность (не меняем)
-        const minOpacity = 0.16; // Минимальная прозрачность (было 0.0, теперь 0.06)
+        const minOpacity = 0.1; // Минимальная прозрачность (было 0.0, теперь 0.06)
     
         if (scrollHeight <= clientHeight) {
             // Если контента меньше высоты контейнера
