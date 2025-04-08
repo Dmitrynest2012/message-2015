@@ -634,7 +634,7 @@ body.in-posyl .settings-popup {
 
 /* Контейнер уведомления */
 .notification-container {
-    position: absolute; /* Изменяем с fixed на absolute */
+    position: absolute;
     left: 50%;
     bottom: -100px; /* Начальная позиция ниже контейнера */
     transform: translateX(-50%);
@@ -652,12 +652,12 @@ body.in-posyl .settings-popup {
 }
 
 .notification-container.visible {
-    bottom: 10px; /* Поднимается чуть выше нижней границы контейнера */
+    /* bottom будет задаваться через JavaScript */
     opacity: 1;
 }
 
 .notification-container.exiting {
-    bottom: 100%; /* Уходит вверх внутри контейнера */
+    bottom: 100%; /* Уходит вверх за пределы контейнера */
     opacity: 0;
 }
 

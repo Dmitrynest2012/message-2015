@@ -231,22 +231,21 @@ async function checkCache() {
 function showNotification() {
     const notificationContainer = document.getElementById("notification-container");
     const notificationText = document.getElementById("notification-text");
+    const imageContainer = document.getElementById("image-container");
 
-    if (!notificationContainer || !notificationText) return;
+    if (!notificationContainer || !notificationText || !imageContainer) return;
 
     // Парсим lastUpdateTime как дату, если это строка
     let updateDate;
     if (typeof lastUpdateTime === "string") {
-        updateDate = new Date(lastUpdateTime); // Предполагаем, что это ISO-строка из Last-Modified
+        updateDate = new Date(lastUpdateTime);
         if (isNaN(updateDate.getTime())) {
-            // Если строка не парсится, используем текущее время из time.js
             updateDate = new Date(Date.UTC(currentYear, currentMonth - 1, currentDay, currentHours, currentMinutes, currentSeconds));
         }
     } else {
-        updateDate = new Date(lastUpdateTime); // Если это уже timestamp
+        updateDate = new Date(lastUpdateTime);
     }
 
-    // Добавляем +3 часа для московского времени, если время в UTC
     updateDate.setUTCHours(updateDate.getUTCHours() + 3);
 
     const day = String(updateDate.getUTCDate()).padStart(2, "0");
@@ -259,12 +258,23 @@ function showNotification() {
 
     notificationText.textContent = `Обновлен текст Посыла [${formattedTime}]`;
 
+    // Рассчитываем середину высоты image-container
+    const imageContainerHeight = imageContainer.offsetHeight;
+    const middlePosition = imageContainerHeight / 2 - notificationContainer.offsetHeight / 2; // Середина контейнера минус половина высоты уведомления
+
+    // Устанавливаем начальную позицию
+    notificationContainer.style.bottom = "-100px";
+    notificationContainer.classList.remove("exiting");
+    notificationContainer.classList.add("visible");
+
+    // Через небольшой таймаут поднимаем до середины
+    setTimeout(() => {
+        notificationContainer.style.bottom = `${middlePosition}px`;
+    }, 10); // Небольшая задержка для начала анимации
+
     // Воспроизводим звук
     notificationAudio.currentTime = 0;
     notificationAudio.play().catch(error => console.error("Ошибка воспроизведения звука уведомления:", error));
-
-    // Анимация появления
-    notificationContainer.classList.add("visible");
 
     // Через 2 секунды начинаем исчезновение
     setTimeout(() => {
@@ -272,10 +282,11 @@ function showNotification() {
         notificationContainer.classList.add("exiting");
 
         // Убираем класс после завершения анимации
-        setTimeout(() => {
+        notificationContainer.addEventListener("transitionend", function handler() {
             notificationContainer.classList.remove("exiting");
-        }, 2000); // Время исчезновения
-    }, 4000); // Время на середине (2 сек появления + 2 сек ожидания)
+            notificationContainer.removeEventListener("transitionend", handler);
+        }, { once: true });
+    }, 4000); // 2 секунды появления + 2 секунды ожидания
 }
 
 function processExcelData() {
