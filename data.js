@@ -539,6 +539,7 @@ function updateDisplay() {
                     }
                     if (!currentIntervalStart || currentIntervalStart !== startTimeInMinutes * 60) {
                         currentIntervalStart = startTimeInMinutes * 60;
+                        hasBellPlayed = false; // Сбрасываем флаг для нового интервала
                     }
                 } else {
                     let dayOffset = startTimeInMinutes > currentTimeInMinutes ? 0 : 1;
@@ -609,12 +610,12 @@ function updateDisplay() {
 
     if (inPosyl) {
         const intervalType = hourlyPosyl ? "часовой посыл" : "ежедневный посыл";
-        if (sendStatus !== "В Посыле") {
+        if (sendStatus !== "В Посыле" || currentIntervalStart !== window.lastIntervalStart) {
             playMusic("В Посыле", intervalType);
             const elapsedTime = currentTotalSeconds - currentIntervalStart;
-            if (window.bellEnabled && elapsedTime <= 1 && !hasBellPlayed) {
+            if (window.bellEnabled && elapsedTime === 0 && !hasBellPlayed) {
                 bellAudio.volume = window.bellVolume;
-                bellAudio.play().catch(error => console.error("Ошибка воспроизведения колокола:", error));
+                bellAudio.play();
                 hasBellPlayed = true;
             }
         } else if (currentTotalSeconds - currentIntervalStart > 0) {
