@@ -208,7 +208,7 @@ async function fetchExcelFile() {
     if (lastContentHash === null) {
         lastContentHash = newContentHash;
         lastUpdateTime = currentLastModified; // Устанавливаем начальное время
-    } else if (lastContentHash !== newContentHash && isUserActive) {
+    } else if (lastContentHash !== newContentHash) {
         // Файл обновился, и пользователь активен
         lastUpdateTime = currentLastModified;
         showNotification();
