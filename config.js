@@ -25,7 +25,7 @@ const bellSound = { src: "sound_of_a_bell.mp3" }; // Добавляем звук
 const notificationSound = { src: "sound_of_notification.mp3" }; // Предполагается, что файл существует
 
 // Глобальные переменные громкости с дефолтными значениями
-window.defaultOutsideVolume = 0.25;
+window.defaultOutsideVolume = 0.06;
 window.defaultPosylVolume = 1.0;
 window.outsideVolume = localStorage.getItem("outsideVolume") !== null ? parseFloat(localStorage.getItem("outsideVolume")) : window.defaultOutsideVolume;
 window.dailyVolume = localStorage.getItem("dailyVolume") !== null ? parseFloat(localStorage.getItem("dailyVolume")) : window.defaultPosylVolume;

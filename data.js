@@ -612,9 +612,9 @@ function updateDisplay() {
         if (sendStatus !== "В Посыле") {
             playMusic("В Посыле", intervalType);
             const elapsedTime = currentTotalSeconds - currentIntervalStart;
-            if (window.bellEnabled && elapsedTime === 0 && !hasBellPlayed) {
+            if (window.bellEnabled && elapsedTime <= 1 && !hasBellPlayed) {
                 bellAudio.volume = window.bellVolume;
-                bellAudio.play();
+                bellAudio.play().catch(error => console.error("Ошибка воспроизведения колокола:", error));
                 hasBellPlayed = true;
             }
         } else if (currentTotalSeconds - currentIntervalStart > 0) {
