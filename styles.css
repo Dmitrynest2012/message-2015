@@ -648,17 +648,18 @@ body.in-posyl .settings-popup {
     gap: 10px;
     z-index: 100;
     opacity: 0;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out; /* Плавный подъем за 0.5 секунды */
 }
 
 .notification-container.visible {
-    /* bottom будет задаваться через JavaScript */
     opacity: 1;
+    /* bottom задается через JS */
 }
 
 .notification-container.exiting {
     bottom: 100%; /* Уходит вверх за пределы контейнера */
     opacity: 0;
+    transition: all 2s ease-in-out; /* Уход вверх за 2 секунды */
 }
 
 /* Иконка вращающихся стрелок */

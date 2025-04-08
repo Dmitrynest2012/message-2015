@@ -235,7 +235,7 @@ function showNotification() {
 
     if (!notificationContainer || !notificationText || !imageContainer) return;
 
-    // Парсим lastUpdateTime как дату, если это строка
+    // Парсим lastUpdateTime как дату
     let updateDate;
     if (typeof lastUpdateTime === "string") {
         updateDate = new Date(lastUpdateTime);
@@ -260,33 +260,34 @@ function showNotification() {
 
     // Рассчитываем середину высоты image-container
     const imageContainerHeight = imageContainer.offsetHeight;
-    const middlePosition = imageContainerHeight / 2 - notificationContainer.offsetHeight / 2; // Середина контейнера минус половина высоты уведомления
+    const middlePosition = imageContainerHeight / 2 - notificationContainer.offsetHeight / 2;
 
-    // Устанавливаем начальную позицию
+    // Устанавливаем начальную позицию и запускаем подъем
     notificationContainer.style.bottom = "-100px";
     notificationContainer.classList.remove("exiting");
     notificationContainer.classList.add("visible");
 
-    // Через небольшой таймаут поднимаем до середины
+    // Поднимаем до середины через небольшой таймаут
     setTimeout(() => {
         notificationContainer.style.bottom = `${middlePosition}px`;
-    }, 10); // Небольшая задержка для начала анимации
+    }, 10);
 
     // Воспроизводим звук
     notificationAudio.currentTime = 0;
     notificationAudio.play().catch(error => console.error("Ошибка воспроизведения звука уведомления:", error));
 
-    // Через 2 секунды начинаем исчезновение
+    // Ожидаем 2 секунды в середине, затем запускаем уход
     setTimeout(() => {
         notificationContainer.classList.remove("visible");
         notificationContainer.classList.add("exiting");
 
-        // Убираем класс после завершения анимации
+        // Очищаем после завершения анимации
         notificationContainer.addEventListener("transitionend", function handler() {
             notificationContainer.classList.remove("exiting");
+            notificationContainer.style.bottom = "-100px"; // Сбрасываем позицию
             notificationContainer.removeEventListener("transitionend", handler);
         }, { once: true });
-    }, 4000); // 2 секунды появления + 2 секунды ожидания
+    }, 2500); // 0.5 сек (подъем) + 2 сек (пауза)
 }
 
 function processExcelData() {
