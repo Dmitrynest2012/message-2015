@@ -370,7 +370,7 @@ function getRandomMusic(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-function playMusic(sendStatus, intervalType) {
+function playMusic(sendStatus, intervalType, forceRestart = false) {
     const isMusicEnabled = localStorage.getItem("musicEnabled") !== "false";
     if (!isMusicEnabled || !hasUserInteracted) return;
 
@@ -394,7 +394,7 @@ function playMusic(sendStatus, intervalType) {
     const startTime = currentIntervalStart ? currentIntervalStart : currentTime;
     const elapsedTime = sendStatus === "В Посыле" ? currentTime - startTime : 0;
 
-    if (newTrack !== currentTrack || audioElement.paused) {
+    if (forceRestart || newTrack !== currentTrack || audioElement.paused) {
         if (currentTrack && sendStatus === "В Посыле" && !audioElement.paused) {
             fadeOutMusic(() => {
                 audioElement.src = newTrack.src;
@@ -405,7 +405,7 @@ function playMusic(sendStatus, intervalType) {
             audioElement.src = newTrack.src;
             audioElement.currentTime = elapsedTime > 0 ? elapsedTime : 0;
             audioElement.volume = targetVolume;
-            audioElement.play();
+            audioElement.play().catch(error => console.error("Ошибка воспроизведения:", error));
         }
         currentTrack = newTrack;
         songTitleElement.textContent = newTrack.title;
@@ -610,8 +610,9 @@ function updateDisplay() {
 
     if (inPosyl) {
         const intervalType = hourlyPosyl ? "часовой посыл" : "ежедневный посыл";
-        if (sendStatus !== "В Посыле" || currentIntervalStart !== window.lastIntervalStart) {
-            playMusic("В Посыле", intervalType);
+        const isNewInterval = currentIntervalStart !== window.lastIntervalStart;
+        if (sendStatus !== "В Посыле" || isNewInterval) {
+            playMusic("В Посыле", intervalType, isNewInterval);
             const elapsedTime = currentTotalSeconds - currentIntervalStart;
             if (window.bellEnabled && elapsedTime === 0 && !hasBellPlayed) {
                 bellAudio.volume = window.bellVolume;
