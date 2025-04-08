@@ -314,7 +314,6 @@ body {
     position: fixed;
     bottom: 120px;
     right: 100px;
-    width: 400px;
     height: 500px; /* Добавляем фиксированную высоту */
     background-color: #3a3f4b;
     border-radius: 10px;
@@ -531,9 +530,16 @@ body.in-posyl .settings-popup {
         bottom: 30px;
     }
 
+
     .settings-toggle {
         right: 82px;
         bottom: 30px;
+    }
+
+    .settings-popup {
+        position: fixed;
+        width: 30%;;
+
     }
 }
 
