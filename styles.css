@@ -314,7 +314,7 @@ body {
     position: fixed;
     bottom: 120px;
     right: 100px;
-    height: 500px; /* Добавляем фиксированную высоту */
+    height: auto; /* Изменяем с 500px на auto для гибкости */
     background-color: #3a3f4b;
     border: 1px solid #d5a1ff17;
     border-radius: 10px;
@@ -541,7 +541,8 @@ body.in-posyl .settings-popup {
 
     .settings-popup {
         position: fixed;
-        width: 30%;;
+        width: 30%;
+        height: 57%; /* Устанавливаем высоту 70% от viewport */
 
     }
 }
@@ -621,6 +622,7 @@ body.in-posyl .settings-popup {
     .settings-popup {
         position: fixed;
         width: calc(100% - 70px);
+        height: 72%; /* Устанавливаем высоту 70% от viewport */
         left: 10px;
         bottom: 20%;
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
