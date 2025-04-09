@@ -696,12 +696,13 @@ body.in-posyl .settings-popup {
 
 /* Замените существующие стили секций в styles.css и добавьте новые */
 
+/* Обновляем стили для .section-content и связанных элементов */
+
 /* Стили для секций настроек */
 .settings-section {
     margin-bottom: 15px;
-    padding-bottom: 15px;
-    background-color: rgba(200, 200, 200, 0.1); /* Сильно прозрачный светло-серый фон */
-    border: 1px solid rgba(220, 220, 220, 0.3); /* Чуть более светлые бордеры */
+    background-color: rgba(200, 200, 200, 0.1);
+    border: 1px solid rgba(220, 220, 220, 0.3);
     border-radius: 8px;
     overflow: hidden;
     transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
@@ -726,34 +727,42 @@ body.in-posyl .settings-popup {
 }
 
 .section-toggle {
-    transition: transform 0.4s ease-in-out; /* Увеличиваем время анимации для большей плавности */
+    transition: transform 0.4s ease-in-out;
 }
 
 .section-collapsed .section-toggle {
-    transform: rotate(-90deg); /* Стрелка вверх при сворачивании */
+    transform: rotate(-90deg);
 }
 
 .section-content {
-    padding: 15px;
-    max-height: 400px; /* Ограничение высоты сохраняем */
-    overflow-y: hidden; /* Запрещаем вертикальный скролл */
+    padding: 15px; /* Сохраняем базовый padding */
+    max-height: 450px; /* Увеличиваем max-height, чтобы вместить весь контент */
+    overflow-y: hidden; /* Оставляем запрет скролла */
     transition: all 0.4s ease-in-out;
     opacity: 1;
     width: 100%;
     box-sizing: border-box;
-    
+    display: flex; /* Используем flex для управления содержимым */
+    flex-direction: column;
 }
 
 .section-collapsed .section-content {
     max-height: 0;
     padding: 0 15px;
-    overflow: hidden; /* Сохраняем скрытие при свернутом состоянии */
+    overflow: hidden;
     opacity: 0;
 }
 
-/* Добавляем временное скрытие скроллбара во время анимации */
 .section-content.animating {
-    overflow: hidden; /* Предотвращаем появление скроллбара во время анимации */
+    overflow: hidden;
+}
+
+/* Добавляем отступ снизу для "Настройки" через псевдоэлемент */
+.section-content:last-child::after {
+    content: "";
+    display: block;
+    height: 15px; /* Отступ внизу для раздела "Настройки" */
+    flex-shrink: 0; /* Предотвращаем сжатие */
 }
 
 /* Стили для кнопок ресурсов */
@@ -761,12 +770,18 @@ body.in-posyl .settings-popup {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%; /* Убеждаемся, что занимает всю ширину */
+}
+
+/* Убираем лишние отступы для раздела ссылок */
+.section-content:first-child {
+    padding-bottom: 15px; /* Симметричный отступ снизу для "Ссылки на основные ресурсы" */
 }
 
 .resource-button {
     display: block;
     padding: 10px 15px;
-    background-color: #5e2a8a; /* Темно-фиолетовый дизайн */
+    background-color: #5e2a8a;
     color: white;
     text-decoration: none;
     border: 1px solid #7f16d4;
@@ -776,7 +791,7 @@ body.in-posyl .settings-popup {
 }
 
 .resource-button:hover {
-    background-color: #a757e8; /* Подсветка при наведении */
+    background-color: #a757e8;
     border: 1px solid #c988ff;
     transform: scale(1.02);
 }
@@ -787,7 +802,7 @@ body.in-posyl .settings-popup {
 
 /* Обновление тем "Вне посыла" и "В посыле" */
 body.outside-posyl .settings-section {
-    background-color: rgba(180, 180, 255, 0.1); /* Чуть более синий оттенок для "Вне посыла" */
+    background-color: rgba(180, 180, 255, 0.1);
     border-color: rgba(200, 200, 255, 0.3);
 }
 
@@ -800,7 +815,7 @@ body.outside-posyl .section-header:hover {
 }
 
 body.in-posyl .settings-section {
-    background-color: rgba(255, 200, 200, 0.1); /* Чуть более теплый оттенок для "В посыле" */
+    background-color: rgba(255, 200, 200, 0.1);
     border-color: rgba(255, 220, 220, 0.3);
 }
 
@@ -812,8 +827,8 @@ body.in-posyl .section-header:hover {
     background-color: rgba(255, 220, 220, 0.3);
 }
 
-/* Убираем стили скроллбара, так как он больше не нужен */
+/* Убираем стили скроллбара */
 .section-content::-webkit-scrollbar {
-    display: none; /* Скрываем скроллбар в Webkit-браузерах */
+    display: none;
 }
 
