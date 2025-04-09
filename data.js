@@ -590,7 +590,9 @@ function updateDisplay() {
         const remainingTime = endTimeInSeconds - currentTotalSeconds;
         const progressPercentage = Math.min((elapsedTime / totalDuration) * 100, 100);
 
-        // Добавляем проверку на 17 секунд до конца
+        
+
+        // Уведомление за 17 секунд
         if (remainingTime <= 17 && remainingTime > 16 && !hasIntervalEndPlayed && window.intervalEndVolume > 0) {
             intervalEndAudio.currentTime = 0;
             intervalEndAudio.volume = window.intervalEndVolume;
