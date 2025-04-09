@@ -2,25 +2,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const settingsToggle = document.getElementById("settings-toggle");
     const settingsPopup = document.getElementById("settings-popup");
     const outsideVolumeSlider = document.getElementById("outside-volume");
-    const dailyVolumeSlider = document.getElementById("daily-volume");
-    const hourlyVolumeSlider = document.getElementById("hourly-volume");
+    const posylVolumeSlider = document.getElementById("posyl-volume");
     const bellToggle = document.getElementById("bell-toggle");
     const bellVolumeSlider = document.getElementById("bell-volume");
     const flameInPosylToggle = document.getElementById("flame-in-posyl");
     const flameOutsidePosylToggle = document.getElementById("flame-outside-posyl");
     const flameVideo = document.getElementById("flame-video");
+    // Новая переменная для полноэкранного режима
+    const fullscreenToggle = document.getElementById("fullscreen-toggle");
 
-    if (!settingsToggle || !settingsPopup || !outsideVolumeSlider || !dailyVolumeSlider || 
-        !hourlyVolumeSlider || !bellToggle || !bellVolumeSlider || !flameInPosylToggle || 
-        !flameOutsidePosylToggle || !flameVideo) {
+    if (!settingsToggle || !settingsPopup || !outsideVolumeSlider || !posylVolumeSlider || 
+        !bellToggle || !bellVolumeSlider || !flameInPosylToggle || 
+        !flameOutsidePosylToggle || !flameVideo || !fullscreenToggle) {
         console.error("Не найдены элементы настроек или видео");
         return;
     }
 
     // Инициализация значений ползунков и переключателей
     outsideVolumeSlider.value = window.outsideVolume;
-    dailyVolumeSlider.value = window.dailyVolume;
-    hourlyVolumeSlider.value = window.hourlyVolume;
+    posylVolumeSlider.value = window.posylVolume;
     bellToggle.checked = window.bellEnabled;
     bellVolumeSlider.value = window.bellVolume;
     bellVolumeSlider.disabled = !window.bellEnabled;
@@ -29,6 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.flameOutsidePosylEnabled = localStorage.getItem("flameOutsidePosylEnabled") === "true";
     flameInPosylToggle.checked = window.flameInPosylEnabled;
     flameOutsidePosylToggle.checked = window.flameOutsidePosylEnabled;
+
+    // Инициализация полноэкранного режима (по умолчанию выключен)
+    fullscreenToggle.checked = false;
 
     // Переключение состояния кнопки и попапа
     let isSettingsActive = false;
@@ -39,13 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if (isSettingsActive) {
             settingsPopup.style.display = "block";
-            // Через небольшой таймаут добавляем класс visible для запуска анимации
             setTimeout(() => {
                 settingsPopup.classList.add("visible");
             }, 10);
         } else {
             settingsPopup.classList.remove("visible");
-            // Ждем завершения анимации перед скрытием
             settingsPopup.addEventListener("transitionend", function handler() {
                 if (!isSettingsActive) {
                     settingsPopup.style.display = "none";
@@ -76,16 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.outsideVolume = newValue;
     });
 
-    dailyVolumeSlider.addEventListener("input", () => {
-        const newValue = parseFloat(dailyVolumeSlider.value);
-        localStorage.setItem("dailyVolume", newValue);
-        window.dailyVolume = newValue;
-    });
-
-    hourlyVolumeSlider.addEventListener("input", () => {
-        const newValue = parseFloat(hourlyVolumeSlider.value);
-        localStorage.setItem("hourlyVolume", newValue);
-        window.hourlyVolume = newValue;
+    posylVolumeSlider.addEventListener("input", () => {
+        const newValue = parseFloat(posylVolumeSlider.value);
+        localStorage.setItem("posylVolume", newValue);
+        window.posylVolume = newValue;
     });
 
     bellToggle.addEventListener("change", () => {
@@ -101,6 +96,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const bellAudio = new Audio(bellSound.src);
         bellAudio.volume = window.bellVolume;
         bellAudio.play();
+    });
+
+    // Логика для полноэкранного режима
+    fullscreenToggle.addEventListener("change", () => {
+        if (fullscreenToggle.checked) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error("Ошибка при входе в полноэкранный режим:", err);
+                fullscreenToggle.checked = false; // Сбрасываем, если не удалось
+            });
+        } else {
+            document.exitFullscreen().catch(err => {
+                console.error("Ошибка при выходе из полноэкранного режима:", err);
+                fullscreenToggle.checked = true; // Сбрасываем, если не удалось
+            });
+        }
+    });
+
+    // Синхронизация состояния переключателя с реальным полноэкранным режимом
+    document.addEventListener("fullscreenchange", () => {
+        fullscreenToggle.checked = !!document.fullscreenElement;
     });
 
     function updateFlameVisibility() {
@@ -156,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.flameInPosylEnabled = flameInPosylToggle.checked;
         localStorage.setItem("flameInPosylEnabled", window.flameInPosylEnabled);
         updateFlameVisibility();
-        // Трюк с прокруткой при включении галочки
         if (!wasEnabled && window.flameInPosylEnabled && sendStatus === "В Посыле") {
             const messageContainer = document.querySelector(".message-container");
             if (messageContainer) {
@@ -176,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.flameOutsidePosylEnabled = flameOutsidePosylToggle.checked;
         localStorage.setItem("flameOutsidePosylEnabled", window.flameOutsidePosylEnabled);
         updateFlameVisibility();
-        // Трюк с прокруткой при включении галочки
         if (!wasEnabled && window.flameOutsidePosylEnabled && sendStatus === "Вне Посыла") {
             const messageContainer = document.querySelector(".message-container");
             if (messageContainer) {
@@ -191,10 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Инициализация видимости при загрузке
     updateFlameVisibility();
 
-    // Существующий код остается без изменений до инициализации элементов
     const desktopFontSizeInput = document.getElementById("desktop-font-size");
     const mobileFontSizeInput = document.getElementById("mobile-font-size");
     const fontSizeDecreaseButtons = document.querySelectorAll(".font-size-decrease");
@@ -205,16 +216,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Инициализация значений из localStorage или дефолтных
     window.desktopFontSize = localStorage.getItem("desktopFontSize") !== null ? parseInt(localStorage.getItem("desktopFontSize")) : 22;
     window.mobileFontSize = localStorage.getItem("mobileFontSize") !== null ? parseInt(localStorage.getItem("mobileFontSize")) : 16;
     desktopFontSizeInput.value = window.desktopFontSize;
     mobileFontSizeInput.value = window.mobileFontSize;
 
-    // Обновляем размер шрифта при загрузке
     adjustMessageTextSize();
 
-    // Обработчики для полей ввода
     desktopFontSizeInput.addEventListener("input", () => {
         let newValue = parseInt(desktopFontSizeInput.value);
         if (isNaN(newValue) || newValue < 16) newValue = 16;
@@ -235,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
         adjustMessageTextSize();
     });
 
-    // Обработчики для кнопок увеличения/уменьшения
     fontSizeDecreaseButtons.forEach(button => {
         button.addEventListener("click", () => {
             const targetId = button.getAttribute("data-target");
@@ -281,67 +288,62 @@ document.addEventListener("DOMContentLoaded", () => {
         const bellAudio = new Audio(bellSound.src);
         bellAudio.volume = window.bellVolume;
         bellAudio.play();
-        // Синхронизируем громкость уведомления с колоколом
         notificationAudio.volume = window.bellVolume;
     });
 
-    // Замените код обработки секций в document.addEventListener("DOMContentLoaded", ...)
-// Обновляем только обработку секций, остальной код остается прежним
-document.querySelectorAll('.section-header').forEach(header => {
-    header.addEventListener('click', () => {
-        const section = header.parentElement;
-        const content = section.querySelector('.section-content');
-        const isCollapsed = section.classList.contains('section-collapsed');
+    document.querySelectorAll('.section-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const section = header.parentElement;
+            const content = section.querySelector('.section-content');
+            const isCollapsed = section.classList.contains('section-collapsed');
 
-        content.classList.add('animating');
+            content.classList.add('animating');
 
-        if (isCollapsed) {
-            section.classList.remove('section-collapsed');
-            content.style.maxHeight = content.scrollHeight + 'px';
-            content.style.opacity = '1';
-            setTimeout(() => {
-                content.style.maxHeight = '450px'; // Соответствует новому max-height
-                content.classList.remove('animating');
-            }, 400);
-        } else {
-            content.style.maxHeight = content.scrollHeight + 'px';
-            setTimeout(() => {
-                section.classList.add('section-collapsed');
-                content.style.maxHeight = '0';
-                content.style.opacity = '0';
+            if (isCollapsed) {
+                section.classList.remove('section-collapsed');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
                 setTimeout(() => {
+                    content.style.maxHeight = '450px';
                     content.classList.remove('animating');
                 }, 400);
-            }, 10);
-        }
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                setTimeout(() => {
+                    section.classList.add('section-collapsed');
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                    setTimeout(() => {
+                        content.classList.remove('animating');
+                    }, 400);
+                }, 10);
+            }
 
-        const sectionTitle = header.querySelector('.section-title').textContent;
-        const newCollapsedState = !isCollapsed;
-        localStorage.setItem(`section-${sectionTitle}-collapsed`, newCollapsedState);
+            const sectionTitle = header.querySelector('.section-title').textContent;
+            const newCollapsedState = !isCollapsed;
+            localStorage.setItem(`section-${sectionTitle}-collapsed`, newCollapsedState);
+        });
     });
-});
 
-// Восстановление состояния секций при загрузке
-document.querySelectorAll('.settings-section').forEach(section => {
-    const sectionTitle = section.querySelector('.section-title').textContent;
-    const isCollapsed = localStorage.getItem(`section-${sectionTitle}-collapsed`) === 'true';
-    const content = section.querySelector('.section-content');
-    
-    if (isCollapsed) {
-        section.classList.add('section-collapsed');
-        content.style.maxHeight = '0';
-        content.style.opacity = '0';
-    } else {
-        content.style.maxHeight = '450px'; // Соответствует новому max-height
-        content.style.opacity = '1';
-    }
-
-    content.addEventListener('transitionend', () => {
-        if (!section.classList.contains('section-collapsed')) {
+    document.querySelectorAll('.settings-section').forEach(section => {
+        const sectionTitle = section.querySelector('.section-title').textContent;
+        const isCollapsed = localStorage.getItem(`section-${sectionTitle}-collapsed`) === 'true';
+        const content = section.querySelector('.section-content');
+        
+        if (isCollapsed) {
+            section.classList.add('section-collapsed');
+            content.style.maxHeight = '0';
+            content.style.opacity = '0';
+        } else {
             content.style.maxHeight = '450px';
+            content.style.opacity = '1';
         }
-        content.classList.remove('animating');
-    });
-});
 
+        content.addEventListener('transitionend', () => {
+            if (!section.classList.contains('section-collapsed')) {
+                content.style.maxHeight = '450px';
+            }
+            content.classList.remove('animating');
+        });
+    });
 });

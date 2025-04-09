@@ -161,8 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(() => {
         if (!audioElement.paused) {
-            const targetVolume = sendStatus === "Вне Посыла" ? window.outsideVolume : 
-                                (currentTrack === hourlyPosylMusic ? window.hourlyVolume : window.dailyVolume);
+            const targetVolume = sendStatus === "Вне Посыла" ? window.outsideVolume : window.posylVolume; // Обновляем на posylVolume
             audioElement.volume = targetVolume;
         }
     }, 100);
@@ -379,15 +378,9 @@ function playMusic(sendStatus, intervalType, forceRestart = false) {
     if (sendStatus === "Вне Посыла") {
         newTrack = getRandomMusic(outsideMusic);
         targetVolume = window.outsideVolume;
-    } else if (intervalType === "часовой посыл") {
-        newTrack = hourlyPosylMusic;
-        targetVolume = window.hourlyVolume;
-    } else if (intervalType === "ежедневный посыл") {
-        newTrack = dailyPosylMusic;
-        targetVolume = window.dailyVolume;
     } else {
-        newTrack = dailyPosylMusic;
-        targetVolume = window.dailyVolume;
+        newTrack = dailyPosylMusic; // Используем одну музыку для всех посылов
+        targetVolume = window.posylVolume; // Единая громкость для посылов
     }
 
     const currentTime = window.currentHours * 3600 + window.currentMinutes * 60 + window.currentSeconds;
