@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     desktopFontSizeInput.addEventListener("input", () => {
         let newValue = parseInt(desktopFontSizeInput.value);
         if (isNaN(newValue) || newValue < 16) newValue = 16;
-        if (newValue > 30) newValue = 30;
+        if (newValue > 40) newValue = 40;
         desktopFontSizeInput.value = newValue;
         window.desktopFontSize = newValue;
         localStorage.setItem("desktopFontSize", newValue);
@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const targetId = button.getAttribute("data-target");
             const input = document.getElementById(targetId);
             let newValue = parseInt(input.value) + 1;
-            if (targetId === "desktop-font-size" && newValue <= 30) {
+            if (targetId === "desktop-font-size" && newValue <= 40) {
                 input.value = newValue;
                 window.desktopFontSize = newValue;
                 localStorage.setItem("desktopFontSize", newValue);
