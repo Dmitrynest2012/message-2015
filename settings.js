@@ -8,12 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const flameInPosylToggle = document.getElementById("flame-in-posyl");
     const flameOutsidePosylToggle = document.getElementById("flame-outside-posyl");
     const flameVideo = document.getElementById("flame-video");
-    // Новая переменная для полноэкранного режима
     const fullscreenToggle = document.getElementById("fullscreen-toggle");
+    const intervalEndVolumeSlider = document.getElementById("interval-end-volume");
 
     if (!settingsToggle || !settingsPopup || !outsideVolumeSlider || !posylVolumeSlider || 
         !bellToggle || !bellVolumeSlider || !flameInPosylToggle || 
-        !flameOutsidePosylToggle || !flameVideo || !fullscreenToggle) {
+        !flameOutsidePosylToggle || !flameVideo || !fullscreenToggle || !intervalEndVolumeSlider) {
         console.error("Не найдены элементы настроек или видео");
         return;
     }
@@ -24,13 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     bellToggle.checked = window.bellEnabled;
     bellVolumeSlider.value = window.bellVolume;
     bellVolumeSlider.disabled = !window.bellEnabled;
+    intervalEndVolumeSlider.value = window.intervalEndVolume;
 
     window.flameInPosylEnabled = localStorage.getItem("flameInPosylEnabled") === "true";
     window.flameOutsidePosylEnabled = localStorage.getItem("flameOutsidePosylEnabled") === "true";
     flameInPosylToggle.checked = window.flameInPosylEnabled;
     flameOutsidePosylToggle.checked = window.flameOutsidePosylEnabled;
 
-    // Инициализация полноэкранного режима (по умолчанию выключен)
     fullscreenToggle.checked = false;
 
     // Переключение состояния кнопки и попапа
@@ -71,6 +71,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Функция debounce для ограничения частоты вызова
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Обработчики ползунков
     outsideVolumeSlider.addEventListener("input", () => {
         const newValue = parseFloat(outsideVolumeSlider.value);
         localStorage.setItem("outsideVolume", newValue);
@@ -89,13 +103,33 @@ document.addEventListener("DOMContentLoaded", () => {
         bellVolumeSlider.disabled = !window.bellEnabled;
     });
 
+    // Обработчик для bellVolumeSlider с debounce
+    const playBellSound = debounce(() => {
+        const bellAudio = new Audio(bellSound.src);
+        bellAudio.volume = window.bellVolume;
+        bellAudio.play();
+        notificationAudio.volume = window.bellVolume;
+    }, 500); // Звук будет проигрываться не чаще чем раз в 500 мс
+
     bellVolumeSlider.addEventListener("input", () => {
         const newValue = parseFloat(bellVolumeSlider.value);
         localStorage.setItem("bellVolume", newValue);
         window.bellVolume = newValue;
-        const bellAudio = new Audio(bellSound.src);
-        bellAudio.volume = window.bellVolume;
-        bellAudio.play();
+        playBellSound();
+    });
+
+    // Обработчик для intervalEndVolumeSlider с debounce
+    const playIntervalEndSound = debounce(() => {
+        const testAudio = new Audio(intervalEndSound.src);
+        testAudio.volume = window.intervalEndVolume;
+        testAudio.play();
+    }, 500); // Звук будет проигрываться не чаще чем раз в 500 мс
+
+    intervalEndVolumeSlider.addEventListener("input", () => {
+        const newValue = parseFloat(intervalEndVolumeSlider.value);
+        localStorage.setItem("intervalEndVolume", newValue);
+        window.intervalEndVolume = newValue;
+        playIntervalEndSound();
     });
 
     // Логика для полноэкранного режима
@@ -103,17 +137,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (fullscreenToggle.checked) {
             document.documentElement.requestFullscreen().catch(err => {
                 console.error("Ошибка при входе в полноэкранный режим:", err);
-                fullscreenToggle.checked = false; // Сбрасываем, если не удалось
+                fullscreenToggle.checked = false;
             });
         } else {
             document.exitFullscreen().catch(err => {
                 console.error("Ошибка при выходе из полноэкранного режима:", err);
-                fullscreenToggle.checked = true; // Сбрасываем, если не удалось
+                fullscreenToggle.checked = true;
             });
         }
     });
 
-    // Синхронизация состояния переключателя с реальным полноэкранным режимом
     document.addEventListener("fullscreenchange", () => {
         fullscreenToggle.checked = !!document.fullscreenElement;
     });
@@ -281,40 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    bellVolumeSlider.addEventListener("input", () => {
-        const newValue = parseFloat(bellVolumeSlider.value);
-        localStorage.setItem("bellVolume", newValue);
-        window.bellVolume = newValue;
-        const bellAudio = new Audio(bellSound.src);
-        bellAudio.volume = window.bellVolume;
-        bellAudio.play();
-        notificationAudio.volume = window.bellVolume;
-    });
-
-    // Добавляем новую переменную
-    const intervalEndVolumeSlider = document.getElementById("interval-end-volume");
-
-    // Добавляем проверку в условие
-    if (!settingsToggle || !settingsPopup || !outsideVolumeSlider || !posylVolumeSlider || 
-        !bellToggle || !bellVolumeSlider || !flameInPosylToggle || 
-        !flameOutsidePosylToggle || !flameVideo || !fullscreenToggle || !intervalEndVolumeSlider) {
-        console.error("Не найдены элементы настроек или видео");
-        return;
-    }
-
-    // Инициализация значения
-    intervalEndVolumeSlider.value = window.intervalEndVolume;
-
-    // Добавляем обработчик для новой настройки
-    intervalEndVolumeSlider.addEventListener("input", () => {
-        const newValue = parseFloat(intervalEndVolumeSlider.value);
-        localStorage.setItem("intervalEndVolume", newValue);
-        window.intervalEndVolume = newValue;
-        const testAudio = new Audio(intervalEndSound.src);
-        testAudio.volume = window.intervalEndVolume;
-        testAudio.play();
-    });
-
     document.querySelectorAll('.section-header').forEach(header => {
         header.addEventListener('click', () => {
             const section = header.parentElement;
@@ -325,14 +324,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (isCollapsed) {
                 section.classList.remove('section-collapsed');
-                content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем высоту для анимации
+                content.style.maxHeight = content.scrollHeight + 'px';
                 content.style.opacity = '1';
                 setTimeout(() => {
-                    content.style.maxHeight = '550px'; // Увеличиваем с 450px до 550px
+                    content.style.maxHeight = '550px';
                     content.classList.remove('animating');
                 }, 400);
             } else {
-                content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем текущую высоту перед сворачиванием
+                content.style.maxHeight = content.scrollHeight + 'px';
                 setTimeout(() => {
                     section.classList.add('section-collapsed');
                     content.style.maxHeight = '0';
@@ -349,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Инициализация состояния секций
     document.querySelectorAll('.settings-section').forEach(section => {
         const sectionTitle = section.querySelector('.section-title').textContent;
         const isCollapsed = localStorage.getItem(`section-${sectionTitle}-collapsed`) === 'true';
@@ -360,15 +358,55 @@ document.addEventListener("DOMContentLoaded", () => {
             content.style.maxHeight = '0';
             content.style.opacity = '0';
         } else {
-            content.style.maxHeight = '550px'; // Увеличиваем с 450px до 550px
+            content.style.maxHeight = '550px';
             content.style.opacity = '1';
         }
 
         content.addEventListener('transitionend', () => {
             if (!section.classList.contains('section-collapsed')) {
-                content.style.maxHeight = '550px'; // Увеличиваем с 450px до 550px
+                content.style.maxHeight = '550px';
             }
             content.classList.remove('animating');
+        });
+    });
+
+    // Функция для обновления значения --value
+    function updateRangeBackground(slider) {
+        const value = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+        slider.style.setProperty('--value', value);
+    }
+
+    // Инициализация ползунков
+    const sliders = [
+        outsideVolumeSlider,
+        posylVolumeSlider,
+        bellVolumeSlider,
+        intervalEndVolumeSlider
+    ];
+
+    sliders.forEach(slider => {
+        updateRangeBackground(slider);
+        slider.addEventListener("input", () => {
+            updateRangeBackground(slider);
+            if (slider === outsideVolumeSlider) {
+                const newValue = parseFloat(slider.value);
+                localStorage.setItem("outsideVolume", newValue);
+                window.outsideVolume = newValue;
+            } else if (slider === posylVolumeSlider) {
+                const newValue = parseFloat(slider.value);
+                localStorage.setItem("posylVolume", newValue);
+                window.posylVolume = newValue;
+            } else if (slider === bellVolumeSlider) {
+                const newValue = parseFloat(slider.value);
+                localStorage.setItem("bellVolume", newValue);
+                window.bellVolume = newValue;
+                playBellSound();
+            } else if (slider === intervalEndVolumeSlider) {
+                const newValue = parseFloat(slider.value);
+                localStorage.setItem("intervalEndVolume", newValue);
+                window.intervalEndVolume = newValue;
+                playIntervalEndSound();
+            }
         });
     });
 });
