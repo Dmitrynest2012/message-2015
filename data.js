@@ -6,6 +6,10 @@ let lastModified = null;
 let lastContentHash = null;
 let sessionId = null;
 
+// Добавляем в начало файла
+let intervalEndAudio;
+let hasIntervalEndPlayed = false;
+
 let imageElement;
 let audioElement;
 let bellAudio;
@@ -87,6 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     notificationAudio = new Audio(notificationSound.src);
     notificationAudio.volume = window.bellVolume; // Используем громкость колокола по умолчанию
+
+    // После notificationAudio
+    intervalEndAudio = new Audio(intervalEndSound.src);
+    intervalEndAudio.volume = window.intervalEndVolume;
 
     // Отслеживание активности пользователя
     isUserActive = true;
@@ -579,7 +587,16 @@ function updateDisplay() {
         }
         const totalDuration = endTimeInSeconds - startTimeInSeconds;
         const elapsedTime = currentTotalSeconds - startTimeInSeconds;
+        const remainingTime = endTimeInSeconds - currentTotalSeconds;
         const progressPercentage = Math.min((elapsedTime / totalDuration) * 100, 100);
+
+        // Добавляем проверку на 17 секунд до конца
+        if (remainingTime <= 17 && remainingTime > 16 && !hasIntervalEndPlayed && window.intervalEndVolume > 0) {
+            intervalEndAudio.currentTime = 0;
+            intervalEndAudio.volume = window.intervalEndVolume;
+            intervalEndAudio.play().catch(error => console.error("Ошибка воспроизведения звука окончания интервала:", error));
+            hasIntervalEndPlayed = true;
+        }
 
         if (Math.abs(progressPercentage - lastProgressPercentage) > 0.1) {
             progressLine.style.width = `${progressPercentage}%`;
@@ -599,13 +616,17 @@ function updateDisplay() {
             updateImage(randomImage);
             lastImageSrc = randomImage;
         }
+        hasIntervalEndPlayed = false;
         currentIntervalStart = null;
         progressLine.style.width = "0%";
         lastProgressPercentage = 0;
         window.updateFlameVisibility();
     }
 
-    
+    // Проверяем переход между интервалами
+    if (inPosyl && sendStatus === "В Посыле" && currentIntervalStart !== window.lastIntervalStart) {
+        hasIntervalEndPlayed = false; // Сбрасываем при новом интервале
+    }
 
     // Определяем необходимость прокрутки при смене состояния
     let shouldTriggerScrollTrick = false;

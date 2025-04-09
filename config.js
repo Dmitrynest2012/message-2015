@@ -24,6 +24,9 @@ const hourlyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto 
 const bellSound = { src: "sound_of_a_bell.mp3" };
 const notificationSound = { src: "sound_of_notification.mp3" };
 
+// Добавляем после notificationSound
+const intervalEndSound = { src: "sound_of_interval_end.mp3" };
+
 // Глобальные переменные громкости с дефолтными значениями
 window.defaultOutsideVolume = 0.09;
 window.defaultPosylVolume = 1.0; // Единая громкость для всех посылов
@@ -34,3 +37,9 @@ window.posylVolume = localStorage.getItem("posylVolume") !== null ? parseFloat(l
 window.defaultBellVolume = 1.0;
 window.bellEnabled = localStorage.getItem("bellEnabled") !== null ? localStorage.getItem("bellEnabled") === "true" : true;
 window.bellVolume = localStorage.getItem("bellVolume") !== null ? parseFloat(localStorage.getItem("bellVolume")) : window.defaultBellVolume;
+
+// Добавляем после bellVolume
+window.defaultIntervalEndVolume = 0.0;
+window.intervalEndVolume = localStorage.getItem("intervalEndVolume") !== null ? 
+    parseFloat(localStorage.getItem("intervalEndVolume")) : 
+    window.defaultIntervalEndVolume;

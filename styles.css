@@ -542,7 +542,7 @@ body.in-posyl .settings-popup {
     .settings-popup {
         position: fixed;
         width: 30%;
-        height: 57%; /* Устанавливаем высоту 70% от viewport */
+        height: 65%; /* Устанавливаем высоту 70% от viewport */
 
     }
 }
@@ -738,7 +738,7 @@ body.in-posyl .settings-popup {
 
 .section-content {
     padding: 15px; /* Сохраняем базовый padding */
-    max-height: 450px; /* Увеличиваем max-height, чтобы вместить весь контент */
+    max-height: 550px; /* Увеличиваем max-height, чтобы вместить весь контент */
     overflow-y: hidden; /* Оставляем запрет скролла */
     transition: all 0.4s ease-in-out;
     opacity: 1;

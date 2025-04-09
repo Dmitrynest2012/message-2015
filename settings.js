@@ -291,6 +291,30 @@ document.addEventListener("DOMContentLoaded", () => {
         notificationAudio.volume = window.bellVolume;
     });
 
+    // Добавляем новую переменную
+    const intervalEndVolumeSlider = document.getElementById("interval-end-volume");
+
+    // Добавляем проверку в условие
+    if (!settingsToggle || !settingsPopup || !outsideVolumeSlider || !posylVolumeSlider || 
+        !bellToggle || !bellVolumeSlider || !flameInPosylToggle || 
+        !flameOutsidePosylToggle || !flameVideo || !fullscreenToggle || !intervalEndVolumeSlider) {
+        console.error("Не найдены элементы настроек или видео");
+        return;
+    }
+
+    // Инициализация значения
+    intervalEndVolumeSlider.value = window.intervalEndVolume;
+
+    // Добавляем обработчик для новой настройки
+    intervalEndVolumeSlider.addEventListener("input", () => {
+        const newValue = parseFloat(intervalEndVolumeSlider.value);
+        localStorage.setItem("intervalEndVolume", newValue);
+        window.intervalEndVolume = newValue;
+        const testAudio = new Audio(intervalEndSound.src);
+        testAudio.volume = window.intervalEndVolume;
+        testAudio.play();
+    });
+
     document.querySelectorAll('.section-header').forEach(header => {
         header.addEventListener('click', () => {
             const section = header.parentElement;
@@ -301,14 +325,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (isCollapsed) {
                 section.classList.remove('section-collapsed');
-                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем высоту для анимации
                 content.style.opacity = '1';
                 setTimeout(() => {
-                    content.style.maxHeight = '450px';
+                    content.style.maxHeight = '550px'; // Увеличиваем с 450px до 550px
                     content.classList.remove('animating');
                 }, 400);
             } else {
-                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем текущую высоту перед сворачиванием
                 setTimeout(() => {
                     section.classList.add('section-collapsed');
                     content.style.maxHeight = '0';
@@ -325,6 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Инициализация состояния секций
     document.querySelectorAll('.settings-section').forEach(section => {
         const sectionTitle = section.querySelector('.section-title').textContent;
         const isCollapsed = localStorage.getItem(`section-${sectionTitle}-collapsed`) === 'true';
@@ -335,13 +360,13 @@ document.addEventListener("DOMContentLoaded", () => {
             content.style.maxHeight = '0';
             content.style.opacity = '0';
         } else {
-            content.style.maxHeight = '450px';
+            content.style.maxHeight = '550px'; // Увеличиваем с 450px до 550px
             content.style.opacity = '1';
         }
 
         content.addEventListener('transitionend', () => {
             if (!section.classList.contains('section-collapsed')) {
-                content.style.maxHeight = '450px';
+                content.style.maxHeight = '550px'; // Увеличиваем с 450px до 550px
             }
             content.classList.remove('animating');
         });
