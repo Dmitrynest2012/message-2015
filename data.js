@@ -500,7 +500,7 @@ function updateDisplay() {
     let hourlyPosyl = null;
     let dailyPosyl = null;
 
-    
+    const currentDateStr = String(new Date().getDate()).padStart(2, "0");
 
     if (jsonData.length === 0) {
         messageText.innerHTML = `<span class="countdown">Ошибка: данные не загружены</span>`;
@@ -532,20 +532,34 @@ function updateDisplay() {
                 const endTimeInMinutes = endHour * 60 + endMinute;
 
                 if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
-                    if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(String(new Date().getDate()).padStart(2, "0"))) {
+                    if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(currentDateStr)) {
                         hourlyPosyl = row;
                     } else if (row["Тип:"] === "ежедневный посыл") {
                         dailyPosyl = row;
                     }
                     if (!currentIntervalStart || currentIntervalStart !== startTimeInMinutes * 60) {
                         currentIntervalStart = startTimeInMinutes * 60;
-                        hasBellPlayed = false; // Сбрасываем флаг для нового интервала
+                        hasBellPlayed = false;
                     }
                 } else {
-                    let dayOffset = startTimeInMinutes > currentTimeInMinutes ? 0 : 1;
-                    let nextTotalSeconds = ((startHour + dayOffset * 24) * 60 + startMinute) * 60;
-                    if (!nextInterval || nextTotalSeconds < nextInterval.nextTotalSeconds) {
-                        nextInterval = { startHour, startMinute, nextTotalSeconds, dayOffset };
+                    // Проверяем, активен ли интервал для текущего дня
+                    let isIntervalActiveToday = true;
+                    if (row["Тип:"] === "часовой посыл") {
+                        try {
+                            const datesArray = JSON.parse(row["Дата [мск]:"]);
+                            isIntervalActiveToday = Array.isArray(datesArray) && datesArray.includes(currentDateStr);
+                        } catch (error) {
+                            console.error("Ошибка парсинга даты:", error);
+                            isIntervalActiveToday = false;
+                        }
+                    }
+
+                    if (isIntervalActiveToday) {
+                        let dayOffset = startTimeInMinutes > currentTimeInMinutes ? 0 : 1;
+                        let nextTotalSeconds = ((startHour + dayOffset * 24) * 60 + startMinute) * 60;
+                        if (!nextInterval || nextTotalSeconds < nextInterval.nextTotalSeconds) {
+                            nextInterval = { startHour, startMinute, nextTotalSeconds, dayOffset };
+                        }
                     }
                 }
             }
