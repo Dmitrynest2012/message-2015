@@ -511,6 +511,24 @@ body.in-posyl .settings-popup {
     background-color: #5c4033;
 }
 
+/* Стили для текста заповедей */
+.commandments-text {
+    color: white;
+    line-height: 1.5;
+    text-align: left;
+    text-indent: 0; /* Убираем возможные отступы */
+    padding-bottom: 15px;
+    margin: 0; /* Убираем внешние отступы */
+}
+
+.commandments-text p {
+    margin: 0; /* Убираем отступы у параграфов */
+    margin-bottom: 10px;
+    padding: 0;
+    text-align: left;
+    font-style: italic; /* Делает текст курсивным */
+}
+
 /* Стили для компьютеров (без ориентации или landscape) */
 @media not all and (orientation: portrait) {
     .image-container {
@@ -581,6 +599,10 @@ body.in-posyl .settings-popup {
         position: fixed;
         width: 30%;
         height: 65%; /* Устанавливаем высоту 70% от viewport */
+    }
+
+    .commandments-text {
+        font-size: 16px;
     }
 }
 
@@ -679,6 +701,12 @@ body.in-posyl .settings-popup {
         right: 20px;
         bottom: 20px;
     }
+
+    /* Стили для текста заповедей */
+.commandments-text {
+    font-size: 14px;
+}
+
 }
 
 /* Контейнер уведомления */
@@ -864,21 +892,3 @@ body.in-posyl .section-header:hover {
     display: none;
 }
 
-/* Стили для текста заповедей */
-.commandments-text {
-    font-size: 16px;
-    color: white;
-    line-height: 1.5;
-    text-align: left;
-    text-indent: 0; /* Убираем возможные отступы */
-    padding-bottom: 15px;
-    margin: 0; /* Убираем внешние отступы */
-}
-
-.commandments-text p {
-    margin: 0; /* Убираем отступы у параграфов */
-    margin-bottom: 10px;
-    padding: 0;
-    text-align: left;
-    font-style: italic; /* Делает текст курсивным */
-}
