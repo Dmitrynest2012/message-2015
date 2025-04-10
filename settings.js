@@ -349,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 content.style.maxHeight = content.scrollHeight + 'px';
                 content.style.opacity = '1';
                 setTimeout(() => {
-                    content.style.maxHeight = '550px';
+                    content.style.maxHeight = '570px';
                     content.classList.remove('animating');
                 }, 400);
             } else {
@@ -380,13 +380,13 @@ document.addEventListener("DOMContentLoaded", () => {
             content.style.maxHeight = '0';
             content.style.opacity = '0';
         } else {
-            content.style.maxHeight = '550px';
+            content.style.maxHeight = '570px';
             content.style.opacity = '1';
         }
 
         content.addEventListener('transitionend', () => {
             if (!section.classList.contains('section-collapsed')) {
-                content.style.maxHeight = '550px';
+                content.style.maxHeight = '570px';
             }
             content.classList.remove('animating');
         });
