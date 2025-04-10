@@ -359,43 +359,34 @@ body {
 }
 
 /* Базовые стили для ползунка */
+/* Базовые стили для ползунка */
 .setting-item input[type="range"] {
     flex: 2;
     width: 100%;
     -webkit-appearance: none;
     appearance: none;
-    height: 5px; /* Высота линии */
-    background: linear-gradient(
-        to right,
-        #a757e8 0%, /* Фиолетовый до ползунка */
-        #a757e8 calc(var(--value) * 1%),
-        #808080 calc(var(--value) * 1%), /* Серый после ползунка */
-        #808080 100%
-    );
+    height: 15px; /* Увеличиваем высоту контейнера, чтобы вместить ползунок */
+    background: #808080; /* Базовый серый фон */
     border-radius: 5px;
     outline: none;
-    transition: box-shadow 0.3s, background 0.3s; /* Плавный переход */
-    box-shadow: 0 0 5px rgba(167, 87, 232, 0.5); /* Лёгкое свечение */
+    position: relative;
+    transition: box-shadow 0.3s ease-in-out; /* Переход только для тени */
+    box-shadow: 0 0 5px rgba(167, 87, 232, 0.5);
 }
 
 /* Эффект при наведении */
 .setting-item input[type="range"]:hover {
-    background: linear-gradient(
-        to right,
-        #bf7aff 0%, /* Ярче фиолетовый до ползунка */
-        #bf7aff calc(var(--value) * 1%),
-        #808080 calc(var(--value) * 1%),
-        #808080 100%
-    );
-    box-shadow: 0 0 10px rgba(167, 87, 232, 0.8); /* Усиленное свечение */
+    box-shadow: 0 0 10px rgba(167, 87, 232, 0.8); /* Оставляем только тень */
 }
 
 /* Стили для трека в Webkit */
 .setting-item input[type="range"]::-webkit-slider-runnable-track {
     width: 100%;
-    height: 5px;
-    background: transparent; /* Делаем трек прозрачным, чтобы работал градиент из input */
+    height: 5px; /* Трек остается 5px */
+    background: transparent;
     border-radius: 5px;
+    position: relative;
+    top: 5px; /* Смещаем трек вниз, чтобы ползунок был полностью виден */
 }
 
 /* Стили для ползунка в Webkit */
@@ -404,39 +395,62 @@ body {
     appearance: none;
     width: 15px;
     height: 15px;
-    background: #8a2be2; /* Фиолетовый ползунок */
+    background: #8a2be2;
     border: 1px solid #c484ff;
-    border-radius: 50%;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: -5px; /* Выравниваем ползунок по центру линии */
+    margin-top: -10px; /* Центрируем ползунок относительно трека */
+    position: relative;
+    z-index: 3;
+}
+/* Создаем псевдоэлемент для прогресса */
+.setting-item input[type="range"] {
+    overflow: hidden; /* Обрезаем лишнее */
+}
+
+.setting-item input[type="range"]::before {
+    content: '';
+    position: absolute;
+    top: 0px; /* Смещаем прогресс вниз, чтобы соответствовать треку */
+    left: 0;
+    height: 15px; /* Высота линии прогресса */
+    width: calc(var(--value) * 1%); /* Ширина до ползунка */
+    background: #a757e8; /* Исходный цвет */
+    border-radius: 5px 0 0 5px;
+    transition: background 0.3s ease-in-out; /* Плавный переход цвета */
+    z-index: 1; /* Ниже ползунка */
+}
+
+.setting-item input[type="range"]:hover::before {
+    background: #bf7aff; /* Цвет при наведении */
 }
 
 /* Стили для Firefox - трек */
 .setting-item input[type="range"]::-moz-range-track {
     width: 100%;
     height: 5px;
-    background: #808080; /* Серый фон трека */
+    background: #808080;
     border-radius: 5px;
 }
 
 /* Подсветка до ползунка в Firefox */
 .setting-item input[type="range"]::-moz-range-progress {
-    background: #a757e8; /* Фиолетовый до ползунка */
+    background: #a757e8;
     height: 5px;
-    border-radius: 5px;
-    transition: background 0.3s;
+    border-radius: 5px 0 0 5px;
+    transition: background 0.3s ease-in-out; /* Плавный переход */
 }
 
 /* Эффект при наведении в Firefox */
 .setting-item input[type="range"]:hover::-moz-range-progress {
-    background: #bf7aff; /* Ярче при наведении */
+    background: #bf7aff;
 }
 
 /* Стили для ползунка в Firefox */
 .setting-item input[type="range"]::-moz-range-thumb {
     width: 15px;
     height: 15px;
-    background: #8a2be2; /* Фиолетовый ползунок */
+    background: #8a2be2;
     border: 1px solid #c484ff;
     border-radius: 50%;
     cursor: pointer;
