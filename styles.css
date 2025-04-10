@@ -906,3 +906,141 @@ body.in-posyl .section-header:hover {
     display: none;
 }
 
+/* Контейнер катрена */
+.quatrain-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 290px; /* Фиксированная ширина */
+    height: 160px; /* Фиксированная высота */
+    padding: 12px;
+    background-color: rgba(53, 53, 110, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(80, 80, 150, 0.5);
+    color: white;
+    z-index: 5;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрирование по вертикали */
+    align-items: flex-start; /* Выравнивание текста по левому краю */
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    overflow: hidden; /* Обрезает волну */
+    cursor: pointer;
+    box-sizing: border-box; /* Учитываем padding в размерах */
+}
+
+/* Подсветка при наведении */
+.quatrain-container:hover {
+    box-shadow: 0 0 10px rgba(167, 87, 232, 0.8);
+    background-color: rgba(53, 53, 110, 0.7);
+}
+
+/* Видимое состояние */
+.quatrain-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: flex; /* Включаем flex для видимого состояния */
+}
+
+/* Эффект перехода (волна) */
+.quatrain-transition {
+    position: absolute;
+    top: -50%; /* Сдвигаем волну вверх относительно контейнера */
+    left: -100%;
+    width: 70px;
+    height: 200%; /* Увеличиваем высоту */
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    opacity: 0;
+    pointer-events: none;
+    transition: left 0.8s ease-in-out, opacity 0.3s ease-in-out;
+    z-index: 6;
+}
+
+/* Активное состояние волны */
+.quatrain-transition.active {
+    left: 350%; /* Движение за пределы справа */
+    opacity: 1;
+}
+
+/* Заголовок катрена */
+.quatrain-title {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #ffd700;
+}
+
+/* Дата катрена */
+.quatrain-date {
+    font-size: 12px;
+    color: white;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Текст катрена */
+.quatrain-text {
+    font-size: 16px;
+    line-height: 0.9; /* Компактный межстрочный интервал */
+    color: white;
+    margin: 0; /* Убираем внешние отступы */
+    padding: 0; /* Убираем внутренние отступы */
+    transform: scaleY(1); /* Сжатие текста по вертикали */
+    transform-origin: top; /* Сжатие начинается сверху */
+    display: block;
+    max-height: 100px; /* Ограничиваем высоту текста */
+    overflow: hidden; /* Обрезаем лишний текст */
+}
+
+/* Тема "В посыле" - скрываем контейнер */
+body.in-posyl .quatrain-container {
+    display: none;
+}
+
+/* Тема "Вне посыла" */
+body.outside-posyl .quatrain-container {
+    background-color: rgba(53, 53, 110, 0.5);
+    border-color: rgba(80, 80, 150, 0.5);
+}
+
+/* Стили для смартфонов (portrait) */
+@media (orientation: portrait) {
+    .quatrain-container {
+        width: 220px; /* Фиксированная ширина для мобильных */
+        height: 140px; /* Меньшая высота для портретной ориентации */
+        padding: 10px;
+        top: 5px;
+        right: 5px;
+    }
+
+    .quatrain-title {
+        font-size: 14px;
+    }
+
+    .quatrain-date {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+
+    .quatrain-text {
+        font-size: 12px;
+        line-height: 0.9; /* Еще меньше для мобильных */
+        transform: scaleY(1.00); /* Усиленное сжатие */
+    }
+
+    /* Корректировка волны для меньшего контейнера */
+    .quatrain-transition {
+        width: 50px; /* Уменьшаем ширину волны для мобильных */
+        height: 200%; /* Увеличиваем высоту */
+    }
+}
+
