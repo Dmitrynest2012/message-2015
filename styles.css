@@ -371,12 +371,12 @@ body {
     outline: none;
     position: relative;
     transition: box-shadow 0.3s ease-in-out; /* Переход только для тени */
-    box-shadow: 0 0 5px rgba(167, 87, 232, 0.5);
+    box-shadow: 0 0 10px rgba(167, 87, 232, 0.5);
 }
 
 /* Эффект при наведении */
 .setting-item input[type="range"]:hover {
-    box-shadow: 0 0 10px rgba(167, 87, 232, 0.8); /* Оставляем только тень */
+    box-shadow: 0 0 15px rgba(167, 87, 232, 0.8); /* Оставляем только тень */
 }
 
 /* Стили для трека в Webkit */
