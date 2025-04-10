@@ -112,6 +112,11 @@ body {
     background-color: #ffd700;
     width: 0;
     transition: width 1s linear;
+    box-shadow: 
+        0 -2px 5px rgba(255, 215, 0, 0.8), /* Основное свечение вверх */
+        2px 0 3px rgba(255, 215, 0, 0.6), /* Свечение вправо */
+        0 -5px 10px rgba(255, 215, 0, 0.4), /* Дополнительное свечение вверх на 5px */
+        3px 0 6px rgba(255, 215, 0, 0.3); /* Дополнительное свечение вправо на 3px */
 }
 
 /* Стили для часов */
@@ -639,7 +644,7 @@ body.in-posyl .settings-popup {
         top: 10px;
         left: 10px;
         width: calc(100% - 20px);
-        height: 50vh;
+        height: 49vh;
     }
 
     .song-title {
@@ -648,10 +653,10 @@ body.in-posyl .settings-popup {
 
     .clock-container {
         position: absolute;
-        top: calc(50vh + 20px);
+        top: calc(49vh + 20px);
         left: 0px;
         width: calc(100% - 20px);
-        height: calc((20% / 1.5) * 0.6);
+        height: calc((20% / 1.5) * 0.69);
         padding: 10px;
         border-radius: 0px;
     }
@@ -661,7 +666,7 @@ body.in-posyl .settings-popup {
     }
 
     #clock {
-        font-size: 32px;
+        font-size: 30px;
     }
 
     .clock-container h1 {

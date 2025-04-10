@@ -684,18 +684,28 @@ function updateDisplay() {
     }
 
     // Выполняем трюк с прокруткой на 1 пиксель при смене состояния
-    if (shouldTriggerScrollTrick && messageContainer) {
-        messageContainer.scrollTo({ top: 0, behavior: "smooth" }); // Сначала плавно в верх
+    // Выполняем трюк с прокруткой на 1 пиксель при смене состояния
+if (shouldTriggerScrollTrick && messageContainer) {
+    // Плавно прокручиваем в начало
+    messageContainer.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Ждем завершения анимации (увеличиваем время до 600 мс для мобильных)
+    setTimeout(() => {
+        // Проверяем, действительно ли прокрутка дошла до верха
+        if (messageContainer.scrollTop !== 0) {
+            messageContainer.scrollTop = 0; // Принудительно устанавливаем в начало
+        }
+
+        // Выполняем трюк с +1 и -1 пикселем для свечи
+        messageContainer.scrollTop += 1;
         setTimeout(() => {
-            messageContainer.scrollTop += 1; // Прокрутка на 1 пиксель вниз
-            setTimeout(() => {
-                messageContainer.scrollTop -= 1; // Возврат на 1 пиксель вверх
-                if (typeof updateFlameOpacity === "function") {
-                    updateFlameOpacity(); // Обновляем прозрачность
-                }
-            }, 100);
-        }, 500); // Ждем завершения плавного скролла вверх (0.5 сек)
-    }
+            messageContainer.scrollTop -= 1;
+            if (typeof updateFlameOpacity === "function") {
+                updateFlameOpacity(); // Обновляем прозрачность свечи
+            }
+        }, 100);
+    }, 500); // Увеличиваем задержку для надежности на смартфонах
+}
 
     const dateElement = document.getElementById("date");
     
@@ -763,6 +773,8 @@ async function checkContentChange() {
     const newContentHash = computeHash(contentString);
     if (newContentHash !== lastContentHash) await fetchExcelFile();
 }
+
+
 
 function waitForTime() {
     if (window.timeInitialized) {
