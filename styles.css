@@ -863,3 +863,22 @@ body.in-posyl .section-header:hover {
 .section-content::-webkit-scrollbar {
     display: none;
 }
+
+/* Стили для текста заповедей */
+.commandments-text {
+    font-size: 16px;
+    color: white;
+    line-height: 1.5;
+    text-align: left;
+    text-indent: 0; /* Убираем возможные отступы */
+    padding-bottom: 15px;
+    margin: 0; /* Убираем внешние отступы */
+}
+
+.commandments-text p {
+    margin: 0; /* Убираем отступы у параграфов */
+    margin-bottom: 10px;
+    padding: 0;
+    text-align: left;
+    font-style: italic; /* Делает текст курсивным */
+}

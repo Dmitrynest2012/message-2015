@@ -11,12 +11,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullscreenToggle = document.getElementById("fullscreen-toggle");
     const intervalEndVolumeSlider = document.getElementById("interval-end-volume");
 
-    if (!settingsToggle || !settingsPopup || !outsideVolumeSlider || !posylVolumeSlider || 
+    // Новый элемент для текста заповедей
+    const commandmentsText = document.querySelector(".commandments-text");
+
+    if (!settingsToggle || !settingsPopup || !commandmentsText || !outsideVolumeSlider || !posylVolumeSlider || 
         !bellToggle || !bellVolumeSlider || !flameInPosylToggle || 
         !flameOutsidePosylToggle || !flameVideo || !fullscreenToggle || !intervalEndVolumeSlider) {
         console.error("Не найдены элементы настроек или видео");
         return;
     }
+
+    
+
+    // Функция форматирования текста с учетом символа ^
+    function formatCommandmentsText() {
+        // Исходный текст (замените на ваш)
+        let text = "1. Мы все равны перед Богом и нет среди нас Первых или Последних.^2. Мы есмь Единое духовное целое.^3. Нас объединяет \"ОДНА ЦЕЛЬ\" и принцип \"ОДИН ЗА ВСЕХ И ВСЕ ЗА ОДНОГО\".^4. Мы есмь Духовные Учителя Света для мира сего, ибо знаем \"КАК\".^5. Мы принимаем ответственность за свой промысел перед Богом и перед людьми.^6. Мы есмь в Боге, как и Бог есмь в нас.^7. Мы вечны, как и вечна Вселенная.^8. Мы едины с Богом и промысел Бога есмь наш промысел, как и наш промысел есмь промысел Бога.^9. Нет у нас иных Богов, кроме Творящего Начала Начал.^10. Наш промысел есмь промысел, подчиненный канонам Вечности и Структуре Мироздания!";
+        const lines = text.split("^"); // Разбиваем по символу ^
+        commandmentsText.innerHTML = lines
+            .map(line => `<p>${line.trim()}</p>`) // Оборачиваем каждую строку в <p> и убираем пробелы
+            .join("");
+    }
+
+    // Вызываем форматирование текста при загрузке
+    formatCommandmentsText();
+
+    
 
     // Инициализация значений ползунков и переключателей
     outsideVolumeSlider.value = window.outsideVolume;
@@ -131,6 +151,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.intervalEndVolume = newValue;
         playIntervalEndSound();
     });
+
+    
 
     // Логика для полноэкранного режима
     fullscreenToggle.addEventListener("change", () => {
