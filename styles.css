@@ -691,8 +691,7 @@ body.in-posyl .settings-popup {
         top: calc(50vh + ((20% / 1.5) * 0.7) + 35px);
         left: 0px;
         width: calc(100% - 20px);
-        height: auto;
-        bottom: 0px;
+        height: calc(50vh - (((20% / 1.5) * 0.7) + 40px) - 30px);
         padding: 10px;
         padding-top: 22px;
         border-radius: 0px;
