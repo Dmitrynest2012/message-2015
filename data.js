@@ -347,14 +347,16 @@ function processExcelData() {
 
 function formatText(text) {
     let result = "";
-    let parts = text.split(/(\*[^*]+\*|\^)/);
+    let parts = text.split(/(\*[^*]+\*|#[^#]+#|\^)/);
     parts.forEach(part => {
         if (part.startsWith("*") && part.endsWith("*")) {
-            result += `<span style="color: #ff99ff">${part.slice(1, -1)}</span>`;
+            result += `<span class="bold-text">${part.slice(1, -1)}</span>`;
+        } else if (part.startsWith("#") && part.endsWith("#")) {
+            result += `<span class="bold-underlined">${part.slice(1, -1)}</span>`;
         } else if (part === "^") {
             result += "<br>";
         } else {
-            result += `<span style="color: white">${part}</span>`;
+            result += `<span class="white-text">${part}</span>`;
         }
     });
     return result;

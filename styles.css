@@ -81,6 +81,19 @@ body {
     color: white;
 }
 
+.bold-text {
+    font-weight: bold;
+}
+
+.bold-underlined {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.white-text {
+    color: white;
+}
+
 /* Бегущий текст названия песни */
 .song-title {
     position: absolute;
@@ -399,7 +412,7 @@ body {
     z-index: 10;
     opacity: 0; /* Начальная прозрачность */
     transform: translateY(20px); /* Начальное смещение вниз */
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.5s ease-in-out;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.5s ease-in-out, width 0.5s ease-in-out, height 0.5s ease-in-out, font-size 0.5s ease-in-out;
     overflow-y: auto; /* Добавляем вертикальный скролл */
     scrollbar-width: thin;
     scrollbar-color: #a757e8 #5e2a8a;
@@ -845,6 +858,12 @@ body.outside-posyl .quatrain-container {
     font-size: 22px;
 }
 
+.settings-popup {
+    position: fixed;
+    width: 30%;
+    height: 65%; /* Устанавливаем высоту 70% от viewport */
+}
+
 /* Стили для полноэкранного режима */
 .fullscreen-compressed .image-container {
     height: calc(var(--image-container-height) * 0.8); /* Сжатие на 20% */
@@ -917,6 +936,11 @@ body.outside-posyl .quatrain-container {
     .countdown {
         margin-top: +16px;
         font-size: 18px;
+    }
+
+    .settings-popup {
+        position: fixed;
+        width: 35%;
     }
 
     /* Стили для контейнера катренов */
@@ -996,6 +1020,11 @@ body.outside-posyl .quatrain-container {
         font-size: 16px;
     }
 
+    .settings-popup {
+        position: fixed;
+        width: 45%;
+    }
+
     /* Стили для контейнера катренов */
     .quatrain-container {
         width: 250px; /* Дальше уменьшаем ширину */
@@ -1073,6 +1102,11 @@ body.outside-posyl .quatrain-container {
         font-size: 14px;
     }
 
+    .settings-popup {
+        position: fixed;
+        width: 55%;
+    }
+
     /* Стили для контейнера катренов */
     .quatrain-container {
         width: 230px; /* Максимально уменьшаем ширину */
@@ -1146,11 +1180,7 @@ body.outside-posyl .quatrain-container {
 
     
 
-    .settings-popup {
-        position: fixed;
-        width: 30%;
-        height: 65%; /* Устанавливаем высоту 70% от viewport */
-    }
+   
 
     .commandments-text {
         font-size: 16px;
