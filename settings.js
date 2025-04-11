@@ -155,23 +155,33 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
     // Логика для полноэкранного режима
-    fullscreenToggle.addEventListener("change", () => {
-        if (fullscreenToggle.checked) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.error("Ошибка при входе в полноэкранный режим:", err);
-                fullscreenToggle.checked = false;
-            });
-        } else {
-            document.exitFullscreen().catch(err => {
-                console.error("Ошибка при выходе из полноэкранного режима:", err);
-                fullscreenToggle.checked = true;
-            });
-        }
-    });
+    // Логика для полноэкранного режима
+fullscreenToggle.addEventListener("change", () => {
+    if (fullscreenToggle.checked) {
+        document.documentElement.requestFullscreen().then(() => {
+            document.body.classList.add("fullscreen-compressed");
+        }).catch(err => {
+            console.error("Ошибка при входе в полноэкранный режим:", err);
+            fullscreenToggle.checked = false;
+        });
+    } else {
+        document.exitFullscreen().then(() => {
+            document.body.classList.remove("fullscreen-compressed");
+        }).catch(err => {
+            console.error("Ошибка при выходе из полноэкранного режима:", err);
+            fullscreenToggle.checked = true;
+        });
+    }
+});
 
-    document.addEventListener("fullscreenchange", () => {
-        fullscreenToggle.checked = !!document.fullscreenElement;
-    });
+document.addEventListener("fullscreenchange", () => {
+    fullscreenToggle.checked = !!document.fullscreenElement;
+    if (document.fullscreenElement) {
+        document.body.classList.add("fullscreen-compressed");
+    } else {
+        document.body.classList.remove("fullscreen-compressed");
+    }
+});
 
     function updateFlameVisibility() {
         const shouldBeVisible = (sendStatus === "В Посыле" && window.flameInPosylEnabled) || 

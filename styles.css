@@ -1,3 +1,10 @@
+/* Определяем CSS-переменные для высоты контейнеров */
+:root {
+    --image-container-height: calc(100vh - 40px);
+    --message-container-height: calc(100vh - (((20% / 1.2) * 0.8) + 80px) - 120px);
+    --flame-container-height: calc(100vh - (((20% / 1.2) * 0.8) + 80px) - 120px + 120px);
+}
+
 /* Импорт шрифта Play из Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
 
@@ -37,8 +44,9 @@ body {
 
 /* Стили для #date */
 #date {
-    transition: color 0.5s ease-in-out; /* Плавный переход цвета за 0.5 секунды */
+   
     display: inline-block; /* Для корректной работы transform */
+    transition: font-size 0.3s ease-in-out, color 0.5s ease-in-out; /* Добавляем переход для font-size */
 }
 
 /* Анимация расширения для более длинного текста */
@@ -122,11 +130,13 @@ body {
 /* Стили для часов */
 #clock {
     font-weight: bold;
+    transition: font-size 0.3s ease-in-out; /* Плавный переход для размера шрифта */
 }
 
 /* Стили для точного Московского времени */
 .clock-container h1 {
     margin: 0;
+    transition: font-size 0.3s ease-in-out;
 }
 
 /* Стили для управления размером шрифта */
@@ -223,6 +233,7 @@ body {
     z-index: 1;
     color: white;
     margin: 0; /* Убираем стандартные отступы параграфа, если они мешают */
+    transition: font-size 0.3s ease-in-out;
 }
 
 #flame-container {
@@ -561,17 +572,153 @@ body.in-posyl .settings-popup {
     border: 1px solid #ffd90042;
 }
 
+/* Контейнер катрена */
+.quatrain-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 290px; /* Фиксированная ширина */
+    height: 160px; /* Фиксированная высота */
+    padding: 12px;
+    background-color: rgba(53, 53, 110, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(80, 80, 150, 0.5);
+    color: white;
+    z-index: 5;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out, padding 0.3s ease-in-out, top 0.3s ease-in-out, right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрирование по вертикали */
+    align-items: flex-start; /* Выравнивание текста по левому краю */
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    overflow: hidden; /* Обрезает волну */
+    cursor: pointer;
+    box-sizing: border-box; /* Учитываем padding в размерах */
+}
+
+/* Подсветка при наведении */
+.quatrain-container:hover {
+    box-shadow: 0 0 10px rgba(167, 87, 232, 0.8);
+    background-color: rgba(53, 53, 110, 0.7);
+}
+
+/* Видимое состояние */
+.quatrain-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: flex; /* Включаем flex для видимого состояния */
+}
+
+/* Эффект перехода (волна) */
+.quatrain-transition {
+    position: absolute;
+    top: -50%; /* Сдвигаем волну вверх относительно контейнера */
+    left: -100%;
+    width: 70px;
+    height: 200%; /* Увеличиваем высоту */
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    opacity: 0;
+    pointer-events: none;
+    transition: left 0.8s ease-in-out, opacity 0.3s ease-in-out;
+    z-index: 6;
+}
+
+/* Активное состояние волны */
+.quatrain-transition.active {
+    left: 350%; /* Движение за пределы справа */
+    opacity: 1;
+}
+
+/* Заголовок катрена */
+.quatrain-title {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #ffd700;
+}
+
+/* Дата катрена */
+.quatrain-date {
+    font-size: 12px;
+    color: white;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Текст катрена */
+.quatrain-text {
+    font-size: 16px;
+    line-height: 0.9; /* Компактный межстрочный интервал */
+    color: white;
+    margin: 0; /* Убираем внешние отступы */
+    padding: 0; /* Убираем внутренние отступы */
+    transform: scaleY(1); /* Сжатие текста по вертикали */
+    transform-origin: top; /* Сжатие начинается сверху */
+    display: block;
+    max-height: 100px; /* Ограничиваем высоту текста */
+    overflow: hidden; /* Обрезаем лишний текст */
+}
+
+/* Тема "В посыле" - скрываем контейнер */
+body.in-posyl .quatrain-container {
+    display: none;
+}
+
+/* Тема "Вне посыла" */
+body.outside-posyl .quatrain-container {
+    background-color: rgba(53, 53, 110, 0.5);
+    border-color: rgba(80, 80, 150, 0.5);
+}
+
+/* Стили для смартфонов (portrait) */
+@media (orientation: portrait) {
+    .quatrain-container {
+        width: 220px; /* Фиксированная ширина для мобильных */
+        height: 140px; /* Меньшая высота для портретной ориентации */
+        padding: 10px;
+        top: 5px;
+        right: 5px;
+    }
+
+    .quatrain-title {
+        font-size: 14px;
+    }
+
+    .quatrain-date {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+
+    .quatrain-text {
+        font-size: 12px;
+        line-height: 0.9; /* Еще меньше для мобильных */
+        transform: scaleY(1.00); /* Усиленное сжатие */
+    }
+
+    /* Корректировка волны для меньшего контейнера */
+    .quatrain-transition {
+        width: 50px; /* Уменьшаем ширину волны для мобильных */
+        height: 200%; /* Увеличиваем высоту */
+    }
+}
+
+/* Стили для компьютеров (без ориентации или landscape) */
 /* Стили для компьютеров (без ориентации или landscape) */
 @media not all and (orientation: portrait) {
     .image-container {
         top: 20px;
         left: 20px;
         width: calc(50% - 50px);
-        height: calc(100vh - 40px);
-    }
-
-    .song-title {
-        font-size: 18px;
+        height: var(--image-container-height);
+        transition: height 0.3s ease-in-out; /* Плавный переход для высоты */
     }
 
     .clock-container {
@@ -583,38 +730,27 @@ body.in-posyl .settings-popup {
         padding: 20px;
     }
 
-    #date {
-        font-size: 20px;
-    }
-
-    #clock {
-        font-size: 44px;
-    }
-
-    .clock-container h1 {
-        font-size: 16px;
-    }
-
     .message-container {
         position: absolute;
         top: calc(((20% / 1.2) * 0.8) + 60px);
         right: 60px;
         width: calc(50% - 90px);
-        height: calc(100vh - (((20% / 1.2) * 0.8) + 80px) - 120px);
+        height: var(--message-container-height);
         padding: 20px;
-        padding-bottom: 100px; /* Оставляем существующий отступ */
+        padding-bottom: 100px;
+        transition: height 0.3s ease-in-out; /* Плавный переход для высоты */
     }
 
-    /* Добавляем псевдоэлемент для отступа */
-    .message-container::after {
-        content: "";
-        display: block;
-        height: 660px; /* Высота отступа внизу */
-    }
-
-    .message-container p,
-    .countdown {
-        font-size: 20px;
+    #flame-container {
+        position: absolute;
+        top: calc(((20% / 1.2) * 0.8) + 60px);
+        right: 60px;
+        width: calc(50% - 50px);
+        height: var(--flame-container-height);
+        z-index: 0; /* Свеча позади текста */
+        transition: height 0.3s ease-in-out; /* Существующий переход */
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+        -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
     }
 
     .music-toggle {
@@ -626,6 +762,321 @@ body.in-posyl .settings-popup {
         right: 82px;
         bottom: 30px;
     }
+
+    #clock {
+        font-size: 42px;
+    }
+
+    #date {
+        font-size: 22px;
+    }
+
+    .message-container p,
+.countdown {
+    margin-top: +16px;
+    font-size: 22px;
+}
+
+/* Стили для полноэкранного режима */
+.fullscreen-compressed .image-container {
+    height: calc(var(--image-container-height) * 0.8); /* Сжатие на 20% */
+}
+
+.fullscreen-compressed .message-container {
+    height: calc(var(--message-container-height) * 0.8); /* Сжатие на 20% */
+}
+
+.fullscreen-compressed #flame-container {
+    height: calc(var(--flame-container-height) * 0.827); /* Сжатие на 20% */
+}
+
+/* Стили для кнопок в полноэкранном режиме */
+.fullscreen-compressed .music-toggle {
+    left: auto; /* Убираем центрирование или другие значения left */
+    right: 90px; /* Совпадает с медиа-запросом до 1600px */
+    bottom: 20px; /* Совпадает с медиа-запросом до 1600px */
+}
+
+.fullscreen-compressed .settings-toggle {
+    right: 20px; /* Совпадает с медиа-запросом до 1600px */
+    bottom: 20px; /* Совпадает с медиа-запросом до 1600px */
+}
+
+    /* Медиа-запрос для ширины до 1600px */
+    @media screen and (max-width: 1600px) {
+        .image-container {
+            width: calc(55% - 50px); /* Увеличиваем долю image-container */
+            height: calc(90vh - 40px); /* Уменьшаем высоту для квадратного вида */
+        }
+
+        .clock-container {
+            width: calc(45% - 90px); /* Уменьшаем ширину */
+            height: calc((18% / 1.2) * 0.7 + 10px); /* Легкое уменьшение высоты */
+        }
+
+        .message-container {
+            width: calc(45% - 90px); /* Уменьшаем ширину */
+            height: calc(90vh - (((18% / 1.2) * 0.8) + 80px) - 120px); /* Уменьшаем высоту */
+        }
+
+        #flame-container {
+            top: calc(((18% / 1.2) * 0.8) + 60px);
+            right: 60px;
+            width: calc(45% - 50px); /* Совпадает с message-container */
+            height: calc(90vh - (((18% / 1.2) * 0.8) + 80px) - 120px + 130px); /* Совпадает с message-container */
+        }
+
+        .music-toggle {
+            left: auto;
+            right: 90px; /* Фиксируем в правом нижнем углу */
+            bottom: 20px;
+        }
+
+        .settings-toggle {
+            right: 20px; /* Фиксируем рядом */
+            bottom: 20px;
+        }
+
+        #clock {
+            font-size: 38px;
+        }
+
+        #date {
+            font-size: 20px;
+        }
+
+        .message-container p,
+    .countdown {
+        margin-top: +16px;
+        font-size: 18px;
+    }
+
+    /* Стили для контейнера катренов */
+    .quatrain-container {
+        width: 270px; /* Уменьшаем ширину */
+        height: 150px; /* Уменьшаем высоту */
+        padding: 10px;
+        top: 8px;
+        right: 8px;
+    }
+
+    .quatrain-title {
+        font-size: 15px;
+    }
+
+    .quatrain-date {
+        font-size: 11px;
+        margin-bottom: 7px;
+    }
+
+    .quatrain-text {
+        font-size: 15px;
+        max-height: 95px;
+    }
+
+    .quatrain-transition {
+        width: 65px; /* Уменьшаем ширину волны */
+    }
+    }
+
+    /* Медиа-запрос для ширины до 1400px */
+    @media screen and (max-width: 1400px) {
+        .image-container {
+            width: calc(60% - 50px); /* Еще больше увеличиваем */
+            height: calc(80vh - 40px); /* Еще уменьшаем высоту */
+        }
+
+        .clock-container {
+            width: calc(40% - 90px); /* Еще меньше */
+            height: calc((16% / 1.2) * 0.7  + 14px); /* Уменьшаем высоту */
+        }
+
+        .message-container {
+            width: calc(40% - 90px); /* Еще меньше */
+            height: calc(80vh - (((16% / 1.2) * 0.8) + 80px) - 120px); /* Уменьшаем высоту */
+        }
+
+        #flame-container {
+            top: calc(((16% / 1.2) * 0.8) + 60px);
+            right: 60px;
+            width: calc(40% - 50px); /* Совпадает с message-container */
+            height: calc(80vh - (((16% / 1.2) * 0.8) + 80px) - 120px + 140px); /* Совпадает с message-container */
+        }
+
+        .music-toggle {
+            left: auto;
+            right: 90px; /* Фиксируем в правом нижнем углу */
+            bottom: 20px;
+        }
+
+        .settings-toggle {
+            right: 20px; /* Фиксируем рядом */
+            bottom: 20px;
+        }
+
+        #clock {
+            font-size: 30px;
+        }
+
+        #date {
+            font-size: 18px;
+        }
+
+        .message-container p,
+    .countdown {
+        margin-top: +16px;
+        font-size: 16px;
+    }
+
+    /* Стили для контейнера катренов */
+    .quatrain-container {
+        width: 250px; /* Дальше уменьшаем ширину */
+        height: 140px; /* Дальше уменьшаем высоту */
+        padding: 8px;
+        top: 6px;
+        right: 6px;
+    }
+
+    .quatrain-title {
+        font-size: 14px;
+    }
+
+    .quatrain-date {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+
+    .quatrain-text {
+        font-size: 14px;
+        max-height: 90px;
+    }
+
+    .quatrain-transition {
+        width: 60px; /* Еще меньше ширина волны */
+    }
+    }
+
+    /* Медиа-запрос для ширины до 1200px */
+    @media screen and (max-width: 1200px) {
+        .image-container {
+            width: calc(65% - 50px); /* Максимально увеличиваем */
+            height: calc(70vh - 40px); /* Максимально уменьшаем высоту */
+        }
+
+        .clock-container {
+            width: calc(35% - 90px); /* Минимальная ширина */
+            height: calc((14% / 1.2) * 0.7 + 28px); /* Минимальная высота */
+        }
+
+        .message-container {
+            width: calc(35% - 90px); /* Минимальная ширина */
+            height: calc(70vh - (((14% / 1.2) * 0.8) + 80px) - 120px); /* Минимальная высота */
+        }
+
+        #flame-container {
+            top: calc(((14% / 1.2) * 0.8) + 60px);
+            right: 60px;
+            width: calc(35% - 50px); /* Совпадает с message-container */
+            height: calc(70vh - (((14% / 1.2) * 0.8) + 80px) - 120px + 150px); /* Совпадает с message-container */
+        }
+
+        .music-toggle {
+            left: auto;
+            right: 90px; /* Фиксируем в правом нижнем углу */
+            bottom: 20px;
+        }
+
+        .settings-toggle {
+            right: 20px; /* Фиксируем рядом */
+            bottom: 20px;
+        }
+
+        #clock {
+            font-size: 30px;
+        }
+
+        #date {
+            font-size: 16px;
+        }
+
+        .message-container p,
+    .countdown {
+        margin-top: +14px;
+        font-size: 14px;
+    }
+
+    /* Стили для контейнера катренов */
+    .quatrain-container {
+        width: 230px; /* Максимально уменьшаем ширину */
+        height: 130px; /* Максимально уменьшаем высоту */
+        padding: 6px;
+        top: 5px;
+        right: 5px;
+    }
+
+    .quatrain-title {
+        font-size: 13px;
+    }
+
+    .quatrain-date {
+        font-size: 9px;
+        margin-bottom: 5px;
+    }
+
+    .quatrain-text {
+        font-size: 13px;
+        max-height: 85px;
+    }
+
+    .quatrain-transition {
+        width: 55px; /* Минимальная ширина волны */
+    }
+
+
+    /* Медиа-запросы для меньших экранов */
+    @media screen and (max-width: 1600px) {
+        :root {
+            --image-container-height: calc(90vh - 40px);
+            --message-container-height: calc(90vh - (((18% / 1.2) * 0.8) + 80px) - 120px);
+            --flame-container-height: calc(90vh - (((18% / 1.2) * 0.8) + 80px) - 120px + 130px);
+        }
+    }
+
+    @media screen and (max-width: 1400px) {
+        :root {
+            --image-container-height: calc(80vh - 40px);
+            --message-container-height: calc(80vh - (((16% / 1.2) * 0.8) + 80px) - 120px);
+            --flame-container-height: calc(80vh - (((16% / 1.2) * 0.8) + 80px) - 120px + 140px);
+        }
+    }
+
+    @media screen and (max-width: 1200px) {
+        :root {
+            --image-container-height: calc(70vh - 40px);
+            --message-container-height: calc(70vh - (((14% / 1.2) * 0.8) + 80px) - 120px);
+            --flame-container-height: calc(70vh - (((14% / 1.2) * 0.8) + 80px) - 120px + 150px);
+        }
+    }
+    }
+
+    /* Остальные стили остаются без изменений */
+    .song-title {
+        font-size: 18px;
+    }
+
+   
+
+    .clock-container h1 {
+        font-size: 16px;
+    }
+
+    .message-container::after {
+        content: "";
+        display: block;
+        height: 660px; /* Высота отступа внизу */
+    }
+
+    
 
     .settings-popup {
         position: fixed;
@@ -924,141 +1375,5 @@ body.in-posyl .section-header:hover {
     display: none;
 }
 
-/* Контейнер катрена */
-.quatrain-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 290px; /* Фиксированная ширина */
-    height: 160px; /* Фиксированная высота */
-    padding: 12px;
-    background-color: rgba(53, 53, 110, 0.5);
-    border-radius: 10px;
-    border: 1px solid rgba(80, 80, 150, 0.5);
-    color: white;
-    z-index: 5;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Центрирование по вертикали */
-    align-items: flex-start; /* Выравнивание текста по левому краю */
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    overflow: hidden; /* Обрезает волну */
-    cursor: pointer;
-    box-sizing: border-box; /* Учитываем padding в размерах */
-}
 
-/* Подсветка при наведении */
-.quatrain-container:hover {
-    box-shadow: 0 0 10px rgba(167, 87, 232, 0.8);
-    background-color: rgba(53, 53, 110, 0.7);
-}
-
-/* Видимое состояние */
-.quatrain-container.visible {
-    opacity: 1;
-    transform: translateY(0);
-    display: flex; /* Включаем flex для видимого состояния */
-}
-
-/* Эффект перехода (волна) */
-.quatrain-transition {
-    position: absolute;
-    top: -50%; /* Сдвигаем волну вверх относительно контейнера */
-    left: -100%;
-    width: 70px;
-    height: 200%; /* Увеличиваем высоту */
-    background: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.5) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    transform: rotate(45deg);
-    opacity: 0;
-    pointer-events: none;
-    transition: left 0.8s ease-in-out, opacity 0.3s ease-in-out;
-    z-index: 6;
-}
-
-/* Активное состояние волны */
-.quatrain-transition.active {
-    left: 350%; /* Движение за пределы справа */
-    opacity: 1;
-}
-
-/* Заголовок катрена */
-.quatrain-title {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    color: #ffd700;
-}
-
-/* Дата катрена */
-.quatrain-date {
-    font-size: 12px;
-    color: white;
-    display: block;
-    margin-bottom: 8px;
-}
-
-/* Текст катрена */
-.quatrain-text {
-    font-size: 16px;
-    line-height: 0.9; /* Компактный межстрочный интервал */
-    color: white;
-    margin: 0; /* Убираем внешние отступы */
-    padding: 0; /* Убираем внутренние отступы */
-    transform: scaleY(1); /* Сжатие текста по вертикали */
-    transform-origin: top; /* Сжатие начинается сверху */
-    display: block;
-    max-height: 100px; /* Ограничиваем высоту текста */
-    overflow: hidden; /* Обрезаем лишний текст */
-}
-
-/* Тема "В посыле" - скрываем контейнер */
-body.in-posyl .quatrain-container {
-    display: none;
-}
-
-/* Тема "Вне посыла" */
-body.outside-posyl .quatrain-container {
-    background-color: rgba(53, 53, 110, 0.5);
-    border-color: rgba(80, 80, 150, 0.5);
-}
-
-/* Стили для смартфонов (portrait) */
-@media (orientation: portrait) {
-    .quatrain-container {
-        width: 220px; /* Фиксированная ширина для мобильных */
-        height: 140px; /* Меньшая высота для портретной ориентации */
-        padding: 10px;
-        top: 5px;
-        right: 5px;
-    }
-
-    .quatrain-title {
-        font-size: 14px;
-    }
-
-    .quatrain-date {
-        font-size: 10px;
-        margin-bottom: 6px;
-    }
-
-    .quatrain-text {
-        font-size: 12px;
-        line-height: 0.9; /* Еще меньше для мобильных */
-        transform: scaleY(1.00); /* Усиленное сжатие */
-    }
-
-    /* Корректировка волны для меньшего контейнера */
-    .quatrain-transition {
-        width: 50px; /* Уменьшаем ширину волны для мобильных */
-        height: 200%; /* Увеличиваем высоту */
-    }
-}
 
