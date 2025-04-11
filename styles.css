@@ -1293,14 +1293,14 @@ body.outside-posyl .quatrain-container {
 /* Иконка вращающихся стрелок */
 .notification-icon {
     font-size: 20px;
-    color: #a757e8; /* Фиолетовый цвет */
+    color: #cd90ff; /* Фиолетовый цвет */
     animation: spin 1s linear infinite;
 }
 
 /* Текст уведомления */
 .notification-text {
     font-size: 16px;
-    color: #a757e8; /* Фиолетовый цвет */
+    color: #cd90ff; /* Фиолетовый цвет */
 }
 
 /* Анимация вращения */
