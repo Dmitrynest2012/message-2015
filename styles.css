@@ -265,6 +265,7 @@ body {
 }
 
 /* Стили для кнопки управления музыкой */
+/* Стили для кнопки управления музыкой */
 .music-toggle {
     position: fixed;
     bottom: 20px;
@@ -277,8 +278,70 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.3s, opacity 0.3s;
+    transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out, color 0.3s ease-in-out; /* Добавляем color в transition */
     z-index: 10;
+}
+
+.music-toggle.active {
+    background-color: #8a2be2;
+    opacity: 1;
+}
+
+.music-toggle.inactive {
+    background-color: #808080;
+    opacity: 0.5;
+}
+
+.music-toggle.inactive:hover {
+    background-color: #999999; /* Светлее серого при наведении в неактивном состоянии */
+    opacity: 0.5; /* Сохраняем прозрачность */
+}
+
+.music-toggle.active:hover {
+    background-color: #b06bff; /* Светлее фиолетового при наведении в активном состоянии */
+    opacity: 1; /* Сохраняем непрозрачность */
+}
+
+/* Стили для кнопки настроек (бутерброд) */
+.settings-toggle {
+    position: fixed;
+    bottom: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    color: #252525; 
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* Добавляем color в transition */
+    z-index: 10;
+}
+
+
+.settings-toggle.active {
+    background-color: #8a2be2;
+    color: #ffffff; /* Белый цвет текста при активации */
+}
+
+.settings-toggle.inactive {
+    background-color: #808080;
+    color: #252525;  /* Возвращаем стандартный цвет текста */
+}
+
+.settings-toggle.inactive:hover {
+    background-color: #999999; /* Светлее серого при наведении в неактивном состоянии */
+}
+
+.settings-toggle.active:hover {
+    background-color: #b06bff; /* Светлее фиолетового при наведении в активном состоянии */
+    color: #ffffff; /* Сохраняем белый цвет текста */
+}
+
+.music-toggle:hover {
+    background-color: #a757e8; /* Промежуточный цвет для наведения */
 }
 
 .music-toggle.active {
@@ -306,6 +369,10 @@ body {
     align-items: center;
     transition: background-color 0.3s;
     z-index: 10;
+}
+
+.settings-toggle:hover {
+    background-color: #a757e8; /* Промежуточный цвет для наведения */
 }
 
 .settings-toggle.active {
@@ -570,6 +637,7 @@ body.in-posyl .settings-popup {
     color: #ffd900;
     background-color: #30303080;
     border: 1px solid #ffd90042;
+    cursor: pointer;
 }
 
 /* Контейнер катрена */
