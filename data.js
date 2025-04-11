@@ -5,6 +5,7 @@ let jsonData = [];
 let lastModified = null;
 let lastContentHash = null;
 let sessionId = null;
+let lastIntervalStart = null;
 
 // Добавляем в начало файла
 let intervalEndAudio;
@@ -93,8 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     notificationAudio.volume = window.bellVolume; // Используем громкость колокола по умолчанию
 
     // После notificationAudio
-    intervalEndAudio = new Audio(intervalEndSound.src);
-    intervalEndAudio.volume = window.intervalEndVolume;
+    
 
     // Отслеживание активности пользователя
     isUserActive = true;
@@ -541,6 +541,7 @@ function updateDisplay() {
                     if (!currentIntervalStart || currentIntervalStart !== startTimeInMinutes * 60) {
                         currentIntervalStart = startTimeInMinutes * 60;
                         hasBellPlayed = false;
+                        hasIntervalEndPlayed = false; // Сбрасываем флаг уведомления при новом интервале
                     }
                 } else {
                     // Проверяем, активен ли интервал для текущего дня
@@ -593,12 +594,14 @@ function updateDisplay() {
         
 
         // Уведомление за 17 секунд
-        if (remainingTime <= 17 && remainingTime > 16 && !hasIntervalEndPlayed && window.intervalEndVolume > 0) {
-            intervalEndAudio.currentTime = 0;
-            intervalEndAudio.volume = window.intervalEndVolume;
-            intervalEndAudio.play().catch(error => console.error("Ошибка воспроизведения звука окончания интервала:", error));
-            hasIntervalEndPlayed = true;
-        }
+        // Уведомление за 17 секунд
+if (remainingTime <= 17 && remainingTime >= 16 && !hasIntervalEndPlayed && window.intervalEndVolume > 0) {
+    // Создаем новый экземпляр аудио для уведомления, чтобы не прерывать музыку
+    const notificationSound = new Audio(intervalEndSound.src);
+    notificationSound.volume = window.intervalEndVolume;
+    notificationSound.play().catch(error => console.error("Ошибка воспроизведения звука окончания интервала:", error));
+    hasIntervalEndPlayed = true;
+}
 
         if (Math.abs(progressPercentage - lastProgressPercentage) > 0.1) {
             progressLine.style.width = `${progressPercentage}%`;
@@ -625,10 +628,7 @@ function updateDisplay() {
         window.updateFlameVisibility();
     }
 
-    // Проверяем переход между интервалами
-    if (inPosyl && sendStatus === "В Посыле" && currentIntervalStart !== window.lastIntervalStart) {
-        hasIntervalEndPlayed = false; // Сбрасываем при новом интервале
-    }
+    
 
     // Определяем необходимость прокрутки при смене состояния
     let shouldTriggerScrollTrick = false;
