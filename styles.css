@@ -21,6 +21,27 @@ body {
     transition: background-color 0.5s ease-in-out;
 }
 
+.metrika-counter {
+    position: fixed;
+    top: 36px;
+    left: -1px;
+    z-index: 100;
+    background: #2a2055b9; /* Можно изменить цвет фона */
+    padding: 12px 34px;
+    border: 1px solid #584f7eab;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Стили для изображения в noscript */
+.metrika-counter noscript div img {
+    position: absolute;
+    left: -9999px;
+}
+
 /* Контейнер с картинкой */
 .image-container {
     position: absolute;
