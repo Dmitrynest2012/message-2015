@@ -17,7 +17,9 @@ const outsideMusic = [
     { src: "music/infinitely.mp3", title: "Infinitely [Keys of Moon]" },
     { src: "music/Ithilien.mp3", title: "Ithilien [Spheriб]" },
     { src: "music/MANTRA.mp3", title: "MANTRA [Alex-Productions]" },
-    { src: "music/Spa-Relax.mp3", title: "Spa-Relax [Alex-Productions]" }
+    { src: "music/Spa-Relax.mp3", title: "Spa-Relax [Alex-Productions]" },
+    { src: "music/Relaxing-Chill-Music--ARNOR.mp3", title: "Relaxing Chill Music | ARNOR [Alex-Productions]" },
+    { src: "music/Fly-Away-When-The-Fog-Settled-Down.mp3", title: "Fly Away When The Fog Settled Down [Spheriá]" }
 ];
 const dailyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
 const hourlyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
