@@ -150,3 +150,35 @@ updateDisplay = function() {
         quatrainContainer.classList.add("visible");
     }
 };
+
+// Проверяем, является ли устройство мобильным
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Функция для блокировки горизонтальной ориентации
+function lockOrientation() {
+    // Выполняем только для мобильных устройств
+    if (isMobileDevice()) {
+        // Проверяем ориентацию
+        window.addEventListener('orientationchange', function() {
+            if (window.orientation === 90 || window.orientation === -90) {
+                // Если горизонтальная ориентация, показываем предупреждение
+                document.body.style.display = 'none';
+                alert('Пожалуйста, используйте портретную ориентацию для этого сайта.');
+            } else {
+                // Восстанавливаем видимость в портретной ориентации
+                document.body.style.display = 'block';
+            }
+        });
+
+        // Проверяем начальную ориентацию при загрузке
+        if (window.orientation === 90 || window.orientation === -90) {
+            document.body.style.display = 'none';
+            alert('Пожалуйста, используйте портретную ориентацию для этого сайта.');
+        }
+    }
+}
+
+// Запускаем при загрузке страницы
+window.onload = lockOrientation;
