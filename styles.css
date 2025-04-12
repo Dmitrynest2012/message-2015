@@ -26,6 +26,7 @@ body {
     top: 36px;
     left: -1px;
     z-index: 100;
+    color: #ffffff;
     background: #2a2055b9; /* Можно изменить цвет фона */
     padding: 12px 34px;
     border: 1px solid #584f7eab;
