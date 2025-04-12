@@ -298,15 +298,14 @@ function showNotification() {
 }
 
 function processExcelData() {
-    let newPosylType = "Ежедневные Посылы";
+    let newPosylType = "Ежедневные Посылы"; // Сбрасываем тип посыла по умолчанию
     const currentDate = String(new Date().getDate()).padStart(2, "0");
-    const nextDay = String(new Date().getDate() + 1).padStart(2, "0");
 
     jsonData.forEach(row => {
-        if (row["Дата [мск]:"]) {
+        if (row["Дата [мск]:"] && row["Тип:"] === "часовой посыл") {
             try {
                 let datesArray = JSON.parse(row["Дата [мск]:"]);
-                if (Array.isArray(datesArray) && (datesArray.includes(currentDate) || datesArray.includes(nextDay))) {
+                if (Array.isArray(datesArray) && datesArray.includes(currentDate)) {
                     newPosylType = "Ежедневные + часовой Посыл";
                 }
             } catch (error) {
