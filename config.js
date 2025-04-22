@@ -25,7 +25,7 @@ const outsideMusic = [
 ];
 const dailyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
 const hourlyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
-const bellSound = { src: "sound_of_a_bell.mp3" };
+const bellSound = { src: "sound_of_a_bell_2.wav" };
 const notificationSound = { src: "sound_of_notification.mp3" };
 
 // Добавляем после notificationSound
