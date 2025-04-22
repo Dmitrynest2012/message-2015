@@ -1389,6 +1389,24 @@ body.outside-posyl .quatrain-container {
         font-size: 13.5px;
     }
 
+    @media screen and (max-height: 1200px) {
+        .setting-item label {
+            font-size: 13.5px;
+        }
+    }
+
+    @media screen and (max-height: 2000px) {
+        .setting-item label {
+            font-size: 14px;
+        }
+    }
+
+    @media screen and (max-height: 2700px) {
+        .setting-item label {
+            font-size: 15px;
+        }
+    }
+
     .music-toggle {
         position: fixed;
         left: 20px;
