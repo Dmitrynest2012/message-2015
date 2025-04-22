@@ -21,6 +21,7 @@ body {
     transition: background-color 0.5s ease-in-out;
 }
 
+
 /* Контейнер с картинкой */
 .image-container {
     position: absolute;
@@ -33,7 +34,8 @@ body {
 #dynamic-image {
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    object-fit: cover; /* Изображение заполняет контейнер, обрезая края */
+    object-position: center; /* Центрируем изображение по горизонтали и вертикали */
     display: block;
     transition: opacity 0.25s ease-in-out;
 }
@@ -92,6 +94,11 @@ body {
 
 .white-text {
     color: white;
+}
+
+.purple-bold {
+    font-weight: bold;
+    color: #d096ff;
 }
 
 /* Бегущий текст названия песни */
@@ -205,6 +212,7 @@ body {
     text-align: center;
     background-color: rgba(68, 75, 88, 0.5);
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    
     border-radius: 10px;
     overflow-y: auto;
     transition: background-color 0.5s ease-in-out;
@@ -219,6 +227,18 @@ body {
     z-index: 1;
     scrollbar-width: thin;
     scrollbar-color: #a757e8 #5e2a8a;
+}
+
+.control-container {
+    position: absolute;
+    top: 20%;
+    right: 60px;
+    width: calc(50% - 90px);
+    
+    border-radius: 10px;
+    height: 70%;
+    padding: 20px; /* Оставляем существующий отступ */
+    min-height: 100px;
 }
 
 .message-container::-webkit-scrollbar {
@@ -282,6 +302,7 @@ body {
 .music-toggle {
     position: fixed;
     bottom: 20px;
+    left: 20px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -319,6 +340,7 @@ body {
 .settings-toggle {
     position: fixed;
     bottom: 20px;
+    right: 25px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -372,6 +394,7 @@ body {
     position: fixed;
     bottom: 20px;
     width: 50px;
+    right: 25px;
     height: 50px;
     border-radius: 50%;
     border: none;
@@ -593,7 +616,7 @@ body.outside-posyl .clock-container {
 }
 
 body.outside-posyl .message-container {
-    background-color: rgba(53, 53, 110, 0.5); /* Полупрозрачный #35356e */
+    background-color: rgba(43, 43, 95, 0.5); /* Полупрозрачный #35356e */
 }
 
 body.outside-posyl .settings-popup {
@@ -614,7 +637,7 @@ body.in-posyl .clock-container {
 }
 
 body.in-posyl .message-container {
-    background-color: rgba(112, 75, 56, 0.5); /* Полупрозрачный #704b38 */
+    background-color: rgba(78, 53, 40, 0.5); /* Полупрозрачный #704b38 */
 }
 
 body.in-posyl .settings-popup {
@@ -640,7 +663,7 @@ body.in-posyl .settings-popup {
     padding-top: 4px;
     padding-bottom: 4px;
     text-align: left;
-    font-style: italic; /* Делает текст курсивным */
+    
     border: 1px solid #ffd90000;
     border-radius: 8px;
     transition: all 0.5s;
@@ -798,8 +821,9 @@ body.outside-posyl .quatrain-container {
         top: 20px;
         left: 20px;
         width: calc(50% - 50px);
-        height: var(--image-container-height);
-        transition: height 0.3s ease-in-out; /* Плавный переход для высоты */
+        height: calc(100vh - 40px); /* Высота до низа с учетом отступов 20px сверху и снизу */
+        bottom: 20px; /* Фиксированный отступ снизу */
+        transition: width 0.3s ease-in-out; /* Плавный переход только для ширины */
     }
 
     .clock-container {
@@ -813,13 +837,26 @@ body.outside-posyl .quatrain-container {
 
     .message-container {
         position: absolute;
+        border: 1px solid rgba(255, 255, 255, 0.082);
         top: calc(((20% / 1.2) * 0.8) + 60px);
         right: 60px;
         width: calc(50% - 90px);
-        height: var(--message-container-height);
+        height: calc(100vh - (((20% / 1.2) * 0.8) + 80px) - 122px); /* Высота до низа с учетом отступов */
         padding: 20px;
         padding-bottom: 100px;
-        transition: height 0.3s ease-in-out; /* Плавный переход для высоты */
+        transition: height 0.3s ease-in-out;
+    }
+
+    .control-container {
+        position: absolute;
+        top: calc(((20% / 1.2) * 0.8) + 60px);
+        right: 60px;
+        width: calc(50% - 90px);
+        
+        border-radius: 10px;
+        height: calc(100vh - (((20% / 1.2) * 0.8) + 80px) - 122px);
+        padding: 20px; /* Оставляем существующий отступ */
+        padding-bottom: 100px;
     }
 
     #flame-container {
@@ -835,13 +872,40 @@ body.outside-posyl .quatrain-container {
     }
 
     .music-toggle {
-        left: calc(50% - 0px);
-        bottom: 30px;
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out, color 0.3s ease-in-out; /* Добавляем color в transition */
+        z-index: 10;
     }
 
+    
+
     .settings-toggle {
-        right: 82px;
-        bottom: 30px;
+        position: absolute;
+        bottom: 20px;
+        right: 25px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        display: flex;
+        color: #252525; 
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* Добавляем color в transition */
+        z-index: 10;
     }
 
     #clock {
@@ -858,6 +922,8 @@ body.outside-posyl .quatrain-container {
     font-size: 22px;
 }
 
+
+
 .settings-popup {
     position: fixed;
     width: 30%;
@@ -866,34 +932,30 @@ body.outside-posyl .quatrain-container {
 
 /* Стили для полноэкранного режима */
 .fullscreen-compressed .image-container {
-    height: calc(var(--image-container-height) * 0.8); /* Сжатие на 20% */
+    height: calc(100vh - 40px); /* Сохраняем высоту в полноэкранном режиме */
+    top: 20px;
+    left: 20px;
+    bottom: 20px;
 }
 
 .fullscreen-compressed .message-container {
-    height: calc(var(--message-container-height) * 0.8); /* Сжатие на 20% */
+    height: calc(var(--message-container-height) * 1); /* Сжатие на 20% */
 }
 
 .fullscreen-compressed #flame-container {
-    height: calc(var(--flame-container-height) * 0.827); /* Сжатие на 20% */
+    height: calc(var(--flame-container-height) * 1); /* Сжатие на 20% */
 }
 
-/* Стили для кнопок в полноэкранном режиме */
-.fullscreen-compressed .music-toggle {
-    left: auto; /* Убираем центрирование или другие значения left */
-    right: 90px; /* Совпадает с медиа-запросом до 1600px */
-    bottom: 20px; /* Совпадает с медиа-запросом до 1600px */
-}
 
-.fullscreen-compressed .settings-toggle {
-    right: 20px; /* Совпадает с медиа-запросом до 1600px */
-    bottom: 20px; /* Совпадает с медиа-запросом до 1600px */
-}
 
     /* Медиа-запрос для ширины до 1600px */
     @media screen and (max-width: 1600px) {
         .image-container {
-            width: calc(55% - 50px); /* Увеличиваем долю image-container */
-            height: calc(90vh - 40px); /* Уменьшаем высоту для квадратного вида */
+            width: calc(55% - 50px);
+            height: calc(100vh - 40px); /* Сохраняем высоту */
+            top: 20px;
+            left: 20px;
+            bottom: 20px;
         }
 
         .clock-container {
@@ -902,8 +964,13 @@ body.outside-posyl .quatrain-container {
         }
 
         .message-container {
-            width: calc(45% - 90px); /* Уменьшаем ширину */
-            height: calc(90vh - (((18% / 1.2) * 0.8) + 80px) - 120px); /* Уменьшаем высоту */
+            width: calc(45% - 90px);
+            height: calc(100% - (((18% / 1.2) * 0.8) + 80px) - 135px); /* Та же высота, что в Full HD */
+        }
+
+        .control-container {
+            width: calc(45% - 90px);
+            height: calc(100% - (((18% / 1.2) * 0.8) + 80px) - 135px); /* Та же высота, что в Full HD */
         }
 
         #flame-container {
@@ -913,15 +980,10 @@ body.outside-posyl .quatrain-container {
             height: calc(90vh - (((18% / 1.2) * 0.8) + 80px) - 120px + 130px); /* Совпадает с message-container */
         }
 
-        .music-toggle {
-            left: auto;
-            right: 90px; /* Фиксируем в правом нижнем углу */
-            bottom: 20px;
-        }
+        
 
         .settings-toggle {
-            right: 20px; /* Фиксируем рядом */
-            bottom: 20px;
+            position: absolute;
         }
 
         #clock {
@@ -941,6 +1003,11 @@ body.outside-posyl .quatrain-container {
     .settings-popup {
         position: fixed;
         width: 35%;
+    }
+
+    .music-toggle {
+        position: absolute;
+        
     }
 
     /* Стили для контейнера катренов */
@@ -974,8 +1041,11 @@ body.outside-posyl .quatrain-container {
     /* Медиа-запрос для ширины до 1400px */
     @media screen and (max-width: 1400px) {
         .image-container {
-            width: calc(60% - 50px); /* Еще больше увеличиваем */
-            height: calc(80vh - 40px); /* Еще уменьшаем высоту */
+            width: calc(60% - 50px);
+            height: calc(100vh - 40px);
+            top: 20px;
+            left: 20px;
+            bottom: 20px;
         }
 
         .clock-container {
@@ -984,8 +1054,13 @@ body.outside-posyl .quatrain-container {
         }
 
         .message-container {
-            width: calc(40% - 90px); /* Еще меньше */
-            height: calc(80vh - (((16% / 1.2) * 0.8) + 80px) - 120px); /* Уменьшаем высоту */
+            width: calc(40% - 90px);
+            height: calc(100vh - (((16% / 1.2) * 0.8) + 80px) - 145px); /* Та же высота */
+        }
+
+        .control-container {
+            width: calc(40% - 90px);
+            height: calc(100vh - (((16% / 1.2) * 0.8) + 80px) - 145px); /* Та же высота */
         }
 
         #flame-container {
@@ -996,14 +1071,12 @@ body.outside-posyl .quatrain-container {
         }
 
         .music-toggle {
-            left: auto;
-            right: 90px; /* Фиксируем в правом нижнем углу */
-            bottom: 20px;
+            position: absolute;
+            
         }
 
         .settings-toggle {
-            right: 20px; /* Фиксируем рядом */
-            bottom: 20px;
+            position: absolute;
         }
 
         #clock {
@@ -1056,8 +1129,11 @@ body.outside-posyl .quatrain-container {
     /* Медиа-запрос для ширины до 1200px */
     @media screen and (max-width: 1200px) {
         .image-container {
-            width: calc(65% - 50px); /* Максимально увеличиваем */
-            height: calc(70vh - 40px); /* Максимально уменьшаем высоту */
+            width: calc(65% - 50px);
+            height: calc(100vh - 40px);
+            top: 20px;
+            left: 20px;
+            bottom: 20px;
         }
 
         .clock-container {
@@ -1066,8 +1142,13 @@ body.outside-posyl .quatrain-container {
         }
 
         .message-container {
-            width: calc(35% - 90px); /* Минимальная ширина */
-            height: calc(70vh - (((14% / 1.2) * 0.8) + 80px) - 120px); /* Минимальная высота */
+            width: calc(35% - 90px);
+            height: calc(100% - (((14% / 1.2) * 0.8) + 80px) - 156px); /* Та же высота */
+        }
+
+        .control-container {
+            width: calc(35% - 90px);
+            height: calc(100% - (((14% / 1.2) * 0.8) + 80px) - 156px); /* Та же высота */
         }
 
         #flame-container {
@@ -1078,14 +1159,12 @@ body.outside-posyl .quatrain-container {
         }
 
         .music-toggle {
-            left: auto;
-            right: 90px; /* Фиксируем в правом нижнем углу */
-            bottom: 20px;
+            position: absolute;
+            
         }
 
         .settings-toggle {
-            right: 20px; /* Фиксируем рядом */
-            bottom: 20px;
+            position: absolute;
         }
 
         #clock {
@@ -1133,6 +1212,8 @@ body.outside-posyl .quatrain-container {
     .quatrain-transition {
         width: 55px; /* Минимальная ширина волны */
     }
+
+    
 
 
     /* Медиа-запросы для меньших экранов */
@@ -1187,6 +1268,31 @@ body.outside-posyl .quatrain-container {
     }
 }
 
+.resource-button {
+    display: block;
+    font-family: 'Play';
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 15px;
+    background-color: #5e2a8a;
+    color: white;
+    text-decoration: none;
+    border: 1px solid #7f16d4;
+    border-radius: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.resource-button:hover {
+    background-color: #a757e8;
+    border: 1px solid #c988ff;
+    transform: scale(1.02);
+}
+
+.resource-button:active {
+    transform: scale(0.98);
+}
+
 /* Стили для смартфонов (portrait) */
 @media (orientation: portrait) {
     .image-container {
@@ -1207,19 +1313,20 @@ body.outside-posyl .quatrain-container {
         width: calc(100% - 20px);
         height: calc((20% / 1.5) * 0.69);
         padding: 10px;
+        padding-top: 5px;
         border-radius: 0px;
     }
 
     #date {
-        font-size: 15px;
+        font-size: 1.6vh;
     }
 
     #clock {
-        font-size: 30px;
+        font-size: 3.6vh;
     }
 
     .clock-container h1 {
-        font-size: 12px;
+        font-size: 1.5vh;
     }
 
     #flame-container {
@@ -1246,6 +1353,17 @@ body.outside-posyl .quatrain-container {
         border-radius: 0px;
     }
 
+    .control-container {
+        position: absolute;
+        left: 0px;
+        top: calc(50vh + ((20% / 1.5) * 0.7) + 35px);
+        width: calc(100% - 20px);
+        height: calc(50vh - (((20% / 1.5) * 0.7) + 40px) - 30px);
+        padding: 10px;
+        padding-top: 22px;
+        border-radius: 0px;
+    }
+
     /* Добавляем псевдоэлемент для отступа */
     .message-container::after {
         content: "";
@@ -1255,7 +1373,7 @@ body.outside-posyl .quatrain-container {
 
     .message-container p,
     .countdown {
-        font-size: 16px;
+        font-size: 1.75vh;
     }
 
     .settings-popup {
@@ -1286,6 +1404,10 @@ body.outside-posyl .quatrain-container {
     /* Стили для текста заповедей */
 .commandments-text {
     font-size: 14px;
+}
+
+.resource-button {
+    font-size: 16px;
 }
 
 }
@@ -1377,7 +1499,7 @@ body.outside-posyl .quatrain-container {
 
 .section-content {
     padding: 15px; /* Сохраняем базовый padding */
-    max-height: 570px; /* Увеличиваем max-height, чтобы вместить весь контент */
+    max-height: 950px; /* Увеличиваем max-height, чтобы вместить весь контент */
     overflow-y: hidden; /* Оставляем запрет скролла */
     transition: all 0.4s ease-in-out;
     opacity: 1;
@@ -1419,27 +1541,7 @@ body.outside-posyl .quatrain-container {
     padding-bottom: 15px; /* Симметричный отступ снизу для "Ссылки на основные ресурсы" */
 }
 
-.resource-button {
-    display: block;
-    padding: 10px 15px;
-    background-color: #5e2a8a;
-    color: white;
-    text-decoration: none;
-    border: 1px solid #7f16d4;
-    border-radius: 20px;
-    text-align: center;
-    transition: background-color 0.3s ease-in-out, transform 0.2s;
-}
 
-.resource-button:hover {
-    background-color: #a757e8;
-    border: 1px solid #c988ff;
-    transform: scale(1.02);
-}
-
-.resource-button:active {
-    transform: scale(0.98);
-}
 
 /* Обновление тем "Вне посыла" и "В посыле" */
 body.outside-posyl .settings-section {

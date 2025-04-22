@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Функция форматирования текста с учетом символа ^
     function formatCommandmentsText() {
         // Исходный текст (замените на ваш)
-        let text = "1. Мы все равны перед Богом и нет среди нас Первых или Последних.^2. Мы есмь Единое духовное целое.^3. Нас объединяет \"ОДНА ЦЕЛЬ\" и принцип \"ОДИН ЗА ВСЕХ И ВСЕ ЗА ОДНОГО\".^4. Мы есмь Духовные Учителя Света для мира сего, ибо знаем \"КАК\".^5. Мы принимаем ответственность за свой промысел перед Богом и перед людьми.^6. Мы есмь в Боге, как и Бог есмь в нас.^7. Мы вечны, как и вечна Вселенная.^8. Мы едины с Богом и промысел Бога есмь наш промысел, как и наш промысел есмь промысел Бога.^9. Нет у нас иных Богов, кроме Творящего Начала Начал.^10. Наш промысел есмь промысел, подчиненный канонам Вечности и Структуре Мироздания!";
+        let text = "1. МЫ ВСЕ РАВНЫ ПЕРЕД БОГОМ И НЕТ СРЕДИ НАС ПЕРВЫХ И ПОСЛЕДНИХ;^2. МЫ ЕСМЬ ЕДИНОЕ ДУХОВНОЕ ЦЕЛОЕ;^3. НАС ОБЪЕДИНЯЕТ «ОДНА ЦЕЛЬ» И ПРИНЦИП «ОДИН ЗА ВСЕХ И ВСЕ ЗА ОДНОГО»;^4. МЫ ЕСМЬ ДУХОВНЫЕ УЧИТЕЛЯ СВЕТА ДЛЯ МИРА СЕГО, ИБО ЗНАЕМ «КАК»;^5. МЫ ПРИНИМАЕМ ОТВЕТСТВЕННОСТЬ ЗА СВОЙ ПРОМЫСЕЛ ПЕРЕД БОГОМ И ПЕРЕД ЛЮДЬМИ;^6. МЫ ЕСМЬ В БОГЕ, КАК И БОГ ЕСМЬ В НАС;^7. МЫ ВЕЧНЫ, КАК И ВЕЧНА ВСЕЛЕННАЯ;^8. МЫ ЕДИНЫ С БОГОМ И ПРОМЫСЕЛ БОГА ЕСМЬ НАШ ПРОМЫСЕЛ, КАК И НАШ ПРОМЫСЕЛ ЕСМЬ ПРОМЫСЕЛ БОГА;^9. НЕТ У НАС ИНЫХ БОГОВ, КРОМЕ ТВОРЯЩЕГО НАЧАЛА НАЧАЛ;^10. НАШ ПРОМЫСЕЛ ЕСМЬ ПРОМЫСЕЛ, ПОДЧИНЁННЫЙ КАНОНАМ ВЕЧНОСТИ И СТРУКТУРЕ МИРОЗДАНИЯ!";
         const lines = text.split("^"); // Разбиваем по символу ^
         commandmentsText.innerHTML = lines
             .map(line => `<p>${line.trim()}</p>`) // Оборачиваем каждую строку в <p> и убираем пробелы
@@ -359,7 +359,7 @@ document.addEventListener("fullscreenchange", () => {
                 content.style.maxHeight = content.scrollHeight + 'px';
                 content.style.opacity = '1';
                 setTimeout(() => {
-                    content.style.maxHeight = '570px';
+                    content.style.maxHeight = '950px';
                     content.classList.remove('animating');
                 }, 400);
             } else {
@@ -390,13 +390,13 @@ document.addEventListener("fullscreenchange", () => {
             content.style.maxHeight = '0';
             content.style.opacity = '0';
         } else {
-            content.style.maxHeight = '570px';
+            content.style.maxHeight = '950px';
             content.style.opacity = '1';
         }
 
         content.addEventListener('transitionend', () => {
             if (!section.classList.contains('section-collapsed')) {
-                content.style.maxHeight = '570px';
+                content.style.maxHeight = '950px';
             }
             content.classList.remove('animating');
         });
