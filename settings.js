@@ -359,7 +359,7 @@ document.addEventListener("fullscreenchange", () => {
                 content.style.maxHeight = content.scrollHeight + 'px';
                 content.style.opacity = '1';
                 setTimeout(() => {
-                    content.style.maxHeight = '950px';
+                    content.style.maxHeight = '1050px';
                     content.classList.remove('animating');
                 }, 400);
             } else {
@@ -390,13 +390,13 @@ document.addEventListener("fullscreenchange", () => {
             content.style.maxHeight = '0';
             content.style.opacity = '0';
         } else {
-            content.style.maxHeight = '950px';
+            content.style.maxHeight = '1050px';
             content.style.opacity = '1';
         }
 
         content.addEventListener('transitionend', () => {
             if (!section.classList.contains('section-collapsed')) {
-                content.style.maxHeight = '950px';
+                content.style.maxHeight = '1050px';
             }
             content.classList.remove('animating');
         });

@@ -1386,7 +1386,7 @@ body.outside-posyl .quatrain-container {
     }
 
     .setting-item label {
-        font-size: 12px;
+        font-size: 14px;
     }
 
     .music-toggle {
@@ -1499,7 +1499,7 @@ body.outside-posyl .quatrain-container {
 
 .section-content {
     padding: 15px; /* Сохраняем базовый padding */
-    max-height: 950px; /* Увеличиваем max-height, чтобы вместить весь контент */
+    max-height: 1050px; /* Увеличиваем max-height, чтобы вместить весь контент */
     overflow-y: hidden; /* Оставляем запрет скролла */
     transition: all 0.4s ease-in-out;
     opacity: 1;
