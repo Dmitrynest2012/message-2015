@@ -156,18 +156,43 @@ function isMobileDevice() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
-// Функция для блокировки горизонтальной ориентации
-function lockOrientation() {
-    // Выполняем только для мобильных устройств
+// Функция для блокировки масштабирования и ориентации
+function lockOrientationAndZoom() {
     if (isMobileDevice()) {
+        // Блокировка масштабирования
+        document.addEventListener('touchstart', function(event) {
+            // Если касаний больше одного (попытка масштабирования)
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Дополнительно блокируем двойное касание для масштабирования
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            let now = new Date().getTime();
+            // Если между касаниями менее 300мс, предотвращаем масштабирование
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+
+        // Устанавливаем мета-тег для отключения пользовательского масштабирования
+        let metaViewport = document.querySelector('meta[name=viewport]');
+        if (!metaViewport) {
+            metaViewport = document.createElement('meta');
+            metaViewport.name = 'viewport';
+            document.head.appendChild(metaViewport);
+        }
+        metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+
         // Проверяем ориентацию
         window.addEventListener('orientationchange', function() {
             if (window.orientation === 90 || window.orientation === -90) {
-                // Если горизонтальная ориентация, показываем предупреждение
                 document.body.style.display = 'none';
                 alert('Пожалуйста, используйте портретную ориентацию для этого сайта.');
             } else {
-                // Восстанавливаем видимость в портретной ориентации
                 document.body.style.display = 'block';
             }
         });
@@ -181,4 +206,4 @@ function lockOrientation() {
 }
 
 // Запускаем при загрузке страницы
-window.onload = lockOrientation;
+window.onload = lockOrientationAndZoom;

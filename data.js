@@ -349,7 +349,7 @@ function formatText(text) {
     let parts = text.split(/(\*[^*]+\*|#[^#]+#|\^)/);
     parts.forEach(part => {
         if (part.startsWith("*") && part.endsWith("*")) {
-            result += `<span class="bold-text">${part.slice(1, -1)}</span>`;
+            result += `<span class="purple-bold">${part.slice(1, -1)}</span>`;
         } else if (part.startsWith("#") && part.endsWith("#")) {
             result += `<span class="bold-underlined">${part.slice(1, -1)}</span>`;
         } else if (part === "^") {
