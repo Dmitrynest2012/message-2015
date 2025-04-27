@@ -29,7 +29,7 @@ const bellSound = { src: "sound_of_a_bell_2.wav" };
 const notificationSound = { src: "sound_of_notification.mp3" };
 
 // Добавляем после notificationSound
-const intervalEndSound = { src: "notification_17.mp3" };
+const intervalEndSound = { src: "warning.mp3" };
 
 // Глобальные переменные громкости с дефолтными значениями
 window.defaultOutsideVolume = 0.09;
