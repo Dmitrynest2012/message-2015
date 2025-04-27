@@ -843,6 +843,7 @@ body.outside-posyl .quatrain-container {
         width: calc(50% - 90px);
         height: calc(100vh - (((20% / 1.2) * 0.8) + 80px) - 122px); /* Высота до низа с учетом отступов */
         padding: 20px;
+        font-weight: bold;
         padding-bottom: 100px;
         transition: height 0.3s ease-in-out;
     }
@@ -1351,6 +1352,7 @@ body.outside-posyl .quatrain-container {
         padding: 10px;
         padding-top: 22px;
         border-radius: 0px;
+        font-weight: bold;
     }
 
     .control-container {
