@@ -7,7 +7,6 @@ let lastContentHash = null;
 let sessionId = null;
 let lastIntervalStart = null;
 
-// Добавляем в начало файла
 let intervalEndAudio;
 let hasIntervalEndPlayed = false;
 
@@ -47,18 +46,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!flameVideo) throw new Error("Элемент #flame-video не найден");
 
     // Проверка загрузки видео
-    console.log("Путь к видео:", flameVideo.src); // Логируем полный путь
+    console.log("Путь к видео:", flameVideo.src);
     flameVideo.addEventListener("loadeddata", () => {
         console.log("Видео успешно загружено");
     });
     flameVideo.addEventListener("error", (e) => {
         console.error("Ошибка загрузки видео:", e.target.error.message);
     });
-    // Принудительно пытаемся загрузить видео
     flameVideo.load();
 
-    // Добавляем обработчики для настроек (если их нет)
-    const flameOutsideCheckbox = document.querySelector("#flame-outside-checkbox"); // Замените на реальный ID
+    // Предварительная загрузка изображений
+    const preloadImages = [...outsidePosylImages, dailyPosylImage, hourlyPosylImage];
+    preloadImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => console.log(`Предварительно загружено изображение: ${src}`);
+        img.onerror = () => console.error(`Ошибка предварительной загрузки изображения: ${src}`);
+    });
+
+    const flameOutsideCheckbox = document.querySelector("#flame-outside-checkbox");
     if (flameOutsideCheckbox) {
         flameOutsideCheckbox.addEventListener("change", (e) => {
             window.flameOutsidePosylEnabled = e.target.checked;
@@ -68,13 +74,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetchExcelFile().then(() => {
-        updateDate(); // Обновляем дату сразу после первой загрузки данных
+        updateDate();
     }).catch(error => {
         console.error("Ошибка при начальной загрузке данных:", error);
-        updateDate(); // Обновляем с дефолтным значением в случае ошибки
+        updateDate();
     });
 
-    // Новый код для динамической прозрачности свечи
     const messageContainer = document.querySelector(".message-container");
     if (messageContainer) {
         messageContainer.style.transition = "scroll-top 0.5s ease-in-out";
@@ -82,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             messageContainer.scrollTop -= 1;
             setTimeout(() => {
-                messageContainer.style.transition = ""; // Убираем transition после анимации
+                messageContainer.style.transition = "";
                 if (typeof updateFlameOpacity === "function") {
                     updateFlameOpacity();
                 }
@@ -91,59 +96,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     notificationAudio = new Audio(notificationSound.src);
-    notificationAudio.volume = window.bellVolume; // Используем громкость колокола по умолчанию
+    notificationAudio.volume = window.bellVolume;
 
-    // После notificationAudio
-    
-
-    // Отслеживание активности пользователя
     isUserActive = true;
     window.addEventListener("focus", () => isUserActive = true);
     window.addEventListener("blur", () => isUserActive = false);
-    
-    
 
     function updateFlameOpacity() {
         if (!flameVideo.classList.contains("visible") || flameVideo.style.display === "none") {
-            return; // Ничего не делаем, если свеча не видна
+            return;
         }
         const messageContainer = document.querySelector(".message-container");
         const scrollTop = messageContainer.scrollTop;
         const scrollHeight = messageContainer.scrollHeight;
         const clientHeight = messageContainer.clientHeight;
-        const maxOpacity = 0.3; // Максимальная прозрачность (не меняем)
-        const minOpacity = 0.05; // Минимальная прозрачность (было 0.0, теперь 0.06)
-    
+        const maxOpacity = 0.3;
+        const minOpacity = 0.05;
+
         if (scrollHeight <= clientHeight) {
-            // Если контента меньше высоты контейнера
             flameVideo.style.opacity = sendStatus === "Вне Посыла" ? maxOpacity : minOpacity;
             return;
         }
-    
+
         const scrollPercentage = (scrollHeight - clientHeight - scrollTop) / (scrollHeight - clientHeight);
         let newOpacity;
         if (sendStatus === "Вне Посыла") {
-            // Вне Посыла: от 0.2 (вверху) до 0.06 (внизу)
             newOpacity = minOpacity + (maxOpacity - minOpacity) * scrollPercentage;
         } else {
-            // В Посыле: от 0.06 (вверху) до 0.2 (внизу)
             newOpacity = minOpacity + (maxOpacity - minOpacity) * (1 - scrollPercentage);
         }
         flameVideo.style.opacity = newOpacity;
     }
 
-    // Обработчик прокрутки
     messageContainer.addEventListener("scroll", updateFlameOpacity);
-    
 
-    // Инициализация прозрачности при загрузке
     updateFlameOpacity();
 
-    // Переопределение updateFlameVisibility
     const originalUpdateFlameVisibility = window.updateFlameVisibility || function() {};
     window.updateFlameVisibility = function() {
-        originalUpdateFlameVisibility(); // Выполняем оригинальную логику
-        // Убираем дублирующий вызов updateFlameOpacity, так как он уже есть в settings.js
+        originalUpdateFlameVisibility();
     };
 
     const musicEnabled = localStorage.getItem("musicEnabled") !== "false";
@@ -169,12 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(() => {
         if (!audioElement.paused) {
-            const targetVolume = sendStatus === "Вне Посыла" ? window.outsideVolume : window.posylVolume; // Обновляем на posylVolume
+            const targetVolume = sendStatus === "Вне Посыла" ? window.outsideVolume : window.posylVolume;
             audioElement.volume = targetVolume;
         }
     }, 100);
 
-    // Добавляем слушатель изменения ориентации
     window.matchMedia("(orientation: portrait)").addEventListener("change", () => {
         adjustMessageTextSize();
     });
@@ -211,12 +201,10 @@ async function fetchExcelFile() {
 
     const currentLastModified = response.headers.get("Last-Modified") || Date.now().toString();
 
-    // Инициализируем lastContentHash при первой загрузке
     if (lastContentHash === null) {
         lastContentHash = newContentHash;
-        lastUpdateTime = currentLastModified; // Устанавливаем начальное время
+        lastUpdateTime = currentLastModified;
     } else if (lastContentHash !== newContentHash) {
-        // Файл обновился, и пользователь активен
         lastUpdateTime = currentLastModified;
         showNotification();
     }
@@ -230,9 +218,8 @@ async function fetchExcelFile() {
     processExcelData();
 }
 
-// Функция проверки изменений (добавляем сюда)
 async function checkCache() {
-    await fetchExcelFile(); // Загружаем файл заново каждые 10 секунд
+    await fetchExcelFile();
 }
 
 function showNotification() {
@@ -242,7 +229,6 @@ function showNotification() {
 
     if (!notificationContainer || !notificationText || !imageContainer) return;
 
-    // Парсим lastUpdateTime как дату
     let updateDate;
     if (typeof lastUpdateTime === "string") {
         updateDate = new Date(lastUpdateTime);
@@ -265,40 +251,34 @@ function showNotification() {
 
     notificationText.textContent = `Обновлен текст Посыла [${formattedTime}]`;
 
-    // Рассчитываем середину высоты image-container
     const imageContainerHeight = imageContainer.offsetHeight;
     const middlePosition = imageContainerHeight / 2 - notificationContainer.offsetHeight / 2;
 
-    // Устанавливаем начальную позицию и запускаем подъем
     notificationContainer.style.bottom = "-100px";
     notificationContainer.classList.remove("exiting");
     notificationContainer.classList.add("visible");
 
-    // Поднимаем до середины через небольшой таймаут
     setTimeout(() => {
         notificationContainer.style.bottom = `${middlePosition}px`;
     }, 10);
 
-    // Воспроизводим звук
     notificationAudio.currentTime = 0;
     notificationAudio.play().catch(error => console.error("Ошибка воспроизведения звука уведомления:", error));
 
-    // Ожидаем 2 секунды в середине, затем запускаем уход
     setTimeout(() => {
         notificationContainer.classList.remove("visible");
         notificationContainer.classList.add("exiting");
 
-        // Очищаем после завершения анимации
         notificationContainer.addEventListener("transitionend", function handler() {
             notificationContainer.classList.remove("exiting");
-            notificationContainer.style.bottom = "-100px"; // Сбрасываем позицию
+            notificationContainer.style.bottom = "-100px";
             notificationContainer.removeEventListener("transitionend", handler);
         }, { once: true });
-    }, 2500); // 0.5 сек (подъем) + 2 сек (пауза)
+    }, 2500);
 }
 
 function processExcelData() {
-    let newPosylType = "Ежедневные Посылы"; // Сбрасываем тип посыла по умолчанию
+    let newPosylType = "Ежедневные Посылы";
     const currentDate = String(new Date().getDate()).padStart(2, "0");
 
     jsonData.forEach(row => {
@@ -324,17 +304,15 @@ function processExcelData() {
         window.posylType = posylType;
         localStorage.setItem("posylType", posylType);
 
-        // Определяем, увеличивается или уменьшается длина текста
         const newText = `Сегодня ${posylType}. ${currentDate}.${String(currentMonth).padStart(2, "0")}.${currentYear}`;
         const isTextLonger = newText.length > oldText.length;
 
-        // Применяем нужную анимацию
         dateElement.classList.add(isTextLonger ? "date-expanding" : "date-shrinking");
         setTimeout(() => {
             dateElement.classList.remove("date-expanding", "date-shrinking");
         }, 500);
 
-        updateDate(); // Обновляем текст и цвет
+        updateDate();
     } else {
         posylType = newPosylType;
         window.posylType = posylType;
@@ -361,13 +339,44 @@ function formatText(text) {
     return result;
 }
 
-function updateImage(newSrc) {
-    if (imageElement.src.endsWith(newSrc)) return;
-    imageElement.classList.add("fade");
-    setTimeout(() => {
-        imageElement.src = newSrc;
-        imageElement.classList.remove("fade");
-    }, 250);
+function updateImage(newSrc, retryCount = 0, maxRetries = 3) {
+    if (imageElement.src.endsWith(newSrc) && imageElement.complete && imageElement.naturalWidth !== 0) {
+        console.log(`Изображение уже установлено: ${newSrc}`);
+        return;
+    }
+
+    const img = new Image();
+    img.src = newSrc;
+
+    img.onload = () => {
+        console.log(`Изображение успешно загружено: ${newSrc}`);
+        imageElement.classList.add("fade");
+        setTimeout(() => {
+            imageElement.src = newSrc;
+            imageElement.classList.remove("fade");
+            lastImageSrc = newSrc;
+        }, 250);
+    };
+
+    img.onerror = () => {
+        if (retryCount < maxRetries) {
+            console.warn(`Ошибка загрузки изображения: ${newSrc}, попытка ${retryCount + 1} из ${maxRetries}`);
+            setTimeout(() => {
+                updateImage(newSrc, retryCount + 1, maxRetries);
+            }, 1000 * (retryCount + 1));
+        } else {
+            console.error(`Не удалось загрузить изображение после ${maxRetries} попыток: ${newSrc}`);
+            // Устанавливаем запасное изображение
+            const fallbackImage = outsidePosylImages[0];
+            imageElement.classList.add("fade");
+            setTimeout(() => {
+                imageElement.src = fallbackImage;
+                imageElement.classList.remove("fade");
+                lastImageSrc = fallbackImage;
+                console.log(`Установлено запасное изображение: ${fallbackImage}`);
+            }, 250);
+        }
+    };
 }
 
 function getRandomImage(array) {
@@ -388,8 +397,8 @@ function playMusic(sendStatus, intervalType, forceRestart = false) {
         newTrack = getRandomMusic(outsideMusic);
         targetVolume = window.outsideVolume;
     } else {
-        newTrack = dailyPosylMusic; // Используем одну музыку для всех посылов
-        targetVolume = window.posylVolume; // Единая громкость для посылов
+        newTrack = dailyPosylMusic;
+        targetVolume = window.posylVolume;
     }
 
     const currentTime = window.currentHours * 3600 + window.currentMinutes * 60 + window.currentSeconds;
@@ -480,6 +489,7 @@ function updateDisplay() {
             updateImage(outsidePosylImages[0]);
             lastImageSrc = outsidePosylImages[0];
         }
+        // Явно устанавливаем тему "вне посыла"
         document.body.classList.remove("in-posyl");
         document.body.classList.add("outside-posyl");
         progressLine.style.width = "0%";
@@ -542,10 +552,9 @@ function updateDisplay() {
                     if (!currentIntervalStart || currentIntervalStart !== startTimeInMinutes * 60) {
                         currentIntervalStart = startTimeInMinutes * 60;
                         hasBellPlayed = false;
-                        hasIntervalEndPlayed = false; // Сбрасываем флаг уведомления при новом интервале
+                        hasIntervalEndPlayed = false;
                     }
                 } else {
-                    // Проверяем, активен ли интервал для текущего дня
                     let isIntervalActiveToday = true;
                     if (row["Тип:"] === "часовой посыл") {
                         try {
@@ -592,17 +601,12 @@ function updateDisplay() {
         const remainingTime = endTimeInSeconds - currentTotalSeconds;
         const progressPercentage = Math.min((elapsedTime / totalDuration) * 100, 100);
 
-        
-
-        // Уведомление за 17 секунд
-        // Уведомление за 17 секунд
-if (remainingTime <= 17 && remainingTime >= 16 && !hasIntervalEndPlayed && window.intervalEndVolume > 0) {
-    // Создаем новый экземпляр аудио для уведомления, чтобы не прерывать музыку
-    const notificationSound = new Audio(intervalEndSound.src);
-    notificationSound.volume = window.intervalEndVolume;
-    notificationSound.play().catch(error => console.error("Ошибка воспроизведения звука окончания интервала:", error));
-    hasIntervalEndPlayed = true;
-}
+        if (remainingTime <= 17 && remainingTime >= 16 && !hasIntervalEndPlayed && window.intervalEndVolume > 0) {
+            const notificationSound = new Audio(intervalEndSound.src);
+            notificationSound.volume = window.intervalEndVolume;
+            notificationSound.play().catch(error => console.error("Ошибка воспроизведения звука окончания интервала:", error));
+            hasIntervalEndPlayed = true;
+        }
 
         if (Math.abs(progressPercentage - lastProgressPercentage) > 0.1) {
             progressLine.style.width = `${progressPercentage}%`;
@@ -629,14 +633,11 @@ if (remainingTime <= 17 && remainingTime >= 16 && !hasIntervalEndPlayed && windo
         window.updateFlameVisibility();
     }
 
-    
-
-    // Определяем необходимость прокрутки при смене состояния
     let shouldTriggerScrollTrick = false;
     if (inPosyl && sendStatus !== "В Посыле") {
-        shouldTriggerScrollTrick = true; // Переход из "Вне Посыла" в "В Посыле"
+        shouldTriggerScrollTrick = true;
     } else if (!inPosyl && sendStatus === "В Посыле") {
-        shouldTriggerScrollTrick = true; // Переход из "В Посыле" в "Вне Посыла"
+        shouldTriggerScrollTrick = true;
     }
 
     if (inPosyl) {
@@ -656,6 +657,7 @@ if (remainingTime <= 17 && remainingTime >= 16 && !hasIntervalEndPlayed && windo
         sendStatus = "В Посыле";
         messageText.innerHTML = formatText(sendText);
         wasInPosyl = true;
+        // Явно устанавливаем тему "в посыле"
         document.body.classList.remove("outside-posyl");
         document.body.classList.add("in-posyl");
     } else {
@@ -680,37 +682,29 @@ if (remainingTime <= 17 && remainingTime >= 16 && !hasIntervalEndPlayed && windo
         } else {
             messageText.innerHTML = `<span class="countdown">Все посылы на сегодня завершены</span>`;
         }
+        // Явно устанавливаем тему "вне посыла"
         document.body.classList.remove("in-posyl");
         document.body.classList.add("outside-posyl");
     }
 
-    // Выполняем трюк с прокруткой на 1 пиксель при смене состояния
-    // Выполняем трюк с прокруткой на 1 пиксель при смене состояния
-if (shouldTriggerScrollTrick && messageContainer) {
-    // Плавно прокручиваем в начало
-    messageContainer.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Ждем завершения анимации (увеличиваем время до 600 мс для мобильных)
-    setTimeout(() => {
-        // Проверяем, действительно ли прокрутка дошла до верха
-        if (messageContainer.scrollTop !== 0) {
-            messageContainer.scrollTop = 0; // Принудительно устанавливаем в начало
-        }
-
-        // Выполняем трюк с +1 и -1 пикселем для свечи
-        messageContainer.scrollTop += 1;
+    if (shouldTriggerScrollTrick && messageContainer) {
+        messageContainer.scrollTo({ top: 0, behavior: "smooth" });
         setTimeout(() => {
-            messageContainer.scrollTop -= 1;
-            if (typeof updateFlameOpacity === "function") {
-                updateFlameOpacity(); // Обновляем прозрачность свечи
+            if (messageContainer.scrollTop !== 0) {
+                messageContainer.scrollTop = 0;
             }
-        }, 100);
-    }, 500); // Увеличиваем задержку для надежности на смартфонах
-}
+            messageContainer.scrollTop += 1;
+            setTimeout(() => {
+                messageContainer.scrollTop -= 1;
+                if (typeof updateFlameOpacity === "function") {
+                    updateFlameOpacity();
+                }
+            }, 100);
+        }, 500);
+    }
 
     const dateElement = document.getElementById("date");
     
-    // Обновление класса для date в зависимости от posylType
     if (posylType === "Ежедневные + часовой Посыл") {
         dateElement.classList.remove("posyl-type-white");
         dateElement.classList.add("posyl-type-gold");
@@ -719,28 +713,21 @@ if (shouldTriggerScrollTrick && messageContainer) {
         dateElement.classList.add("posyl-type-white");
     }
 
-    // После всех обновлений текста вызываем настройку размера
     adjustMessageTextSize();
-
-    // Сохраняем текущий интервал для следующей проверки
     window.lastIntervalStart = currentIntervalStart;
 }
 
-// Новая функция для настройки размера текста
 function adjustMessageTextSize() {
     const isPortrait = window.matchMedia("(orientation: portrait)").matches;
     const messageContainer = document.querySelector(".message-container");
 
     if (isPortrait) {
-        // Мобильная версия (вертикальная ориентация)
         messageContainer.style.fontSize = `${window.mobileFontSize}px`;
     } else {
-        // Десктопная версия (без ориентации или landscape)
         messageContainer.style.fontSize = `${window.desktopFontSize}px`;
     }
 }
 
-// Новая функция для проверки типа посыла и обновления цвета
 function checkPosylTypeAndUpdate() {
     const dateElement = document.getElementById("date");
     if (!dateElement) return;
@@ -774,8 +761,6 @@ async function checkContentChange() {
     const newContentHash = computeHash(contentString);
     if (newContentHash !== lastContentHash) await fetchExcelFile();
 }
-
-
 
 function waitForTime() {
     if (window.timeInitialized) {
