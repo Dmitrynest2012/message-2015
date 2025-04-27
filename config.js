@@ -23,8 +23,8 @@ const outsideMusic = [
     { src: "music/Undertow.mp3", title: "Undertow [Scott Buckley]" },
     { src: "music/Don-t-Forget-Me-Alternative-Version-from-2018.mp3", title: "Don't Forget Me (Alternative Version from 2018) [Spheriá]" }
 ];
-const dailyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
-const hourlyPosylMusic = { src: "music/Rachmaninov.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
+const dailyPosylMusic = { src: "music/in_message_music.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
+const hourlyPosylMusic = { src: "music/in_message_music.mp3", title: "Piano Concerto No. 2 in C Minor, Op. 18: II. Adagio sostenuto от Lang Lang. (Валерий Гергиев и Симфонический оркестр Мариинского театра)" };
 const bellSound = { src: "sound_of_a_bell_2.wav" };
 const notificationSound = { src: "sound_of_notification.mp3" };
 
