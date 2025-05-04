@@ -29,6 +29,9 @@ let notificationAudio;
 let lastUpdateTime = null;
 let isUserActive = false;
 
+// Новая глобальная переменная для хранения всех интервалов Часового Посыла за текущий день
+let allHourlyPosylRows = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     messageText = document.getElementById("message-text");
     imageElement = document.getElementById("dynamic-image");
@@ -215,6 +218,28 @@ async function fetchExcelFile() {
     jsonData = XLSX.utils.sheet_to_json(sheet);
     lastModified = currentLastModified;
     lastContentHash = newContentHash;
+
+    // Новый код: заполняем allHourlyPosylRows всеми интервалами Часового Посыла за текущий день
+    const currentDateStr = String(new Date().getDate()).padStart(2, "0");
+    allHourlyPosylRows = jsonData.filter(row => {
+        if (row["Тип:"] !== "часовой посыл") return false;
+        try {
+            const datesArray = JSON.parse(row["Дата [мск]:"]);
+            return Array.isArray(datesArray) && datesArray.includes(currentDateStr);
+        } catch (error) {
+            console.error("Ошибка парсинга даты в allHourlyPosylRows:", error);
+            return row["Дата [мск]:"].includes(currentDateStr);
+        }
+    });
+
+    // Сортируем allHourlyPosylRows по времени начала
+    allHourlyPosylRows.sort((a, b) => {
+        const timeA = a["Время [мск]:"].split("-")[0].split(":").map(Number);
+        const timeB = b["Время [мск]:"].split("-")[0].split(":").map(Number);
+        return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
+    });
+
+
     processExcelData();
 }
 
@@ -482,6 +507,87 @@ function hideSongTitle() {
     songTitleElement.style.display = "none";
 }
 
+
+// Функция для создания таблицы хронометража Часового Посыла
+// Использует allHourlyPosylRows для отображения всех интервалов за текущий день
+// Показывает таблицу только за 7 часов до или во время посыла
+function generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, currentInterval) {
+    console.log("generateHourlyScheduleTable called, currentTimeInMinutes:", currentTimeInMinutes); // Отладка
+    const contentDiv = document.getElementById("hourly-schedule-content");
+    if (!contentDiv) {
+        console.error("Элемент #hourly-schedule-content не найден");
+        return;
+    }
+
+    // Если allHourlyPosylRows пуст, показываем заглушку
+    if (allHourlyPosylRows.length === 0) {
+        contentDiv.innerHTML = `<div class="hourly-schedule-placeholder">Хронометраж Посыла будет доступен за 7 часов до Часового Посыла и во время него</div>`;
+        return;
+    }
+
+    // Проверяем, есть ли активный или предстоящий интервал (за 7 часов до или во время посыла)
+    const isAnyHourlyPosylActive = allHourlyPosylRows.some(row => {
+        const timeInterval = row["Время [мск]:"].replace(/\s*-\s*/, "-");
+        const [startTime, endTime] = timeInterval.split("-");
+        const [startHour, startMinute] = startTime.split(":").map(Number);
+        const [endHour, endMinute] = endTime.split(":").map(Number);
+        const startTimeInMinutes = startHour * 60 + startMinute;
+        const endTimeInMinutes = endHour * 60 + endMinute;
+        // Активно, если текущее время >= начала - 7 часов И <= конца интервала
+        return currentTimeInMinutes >= startTimeInMinutes - 7 * 60 && 
+               currentTimeInMinutes <= endTimeInMinutes;
+    });
+
+    // Если нет активных или предстоящих интервалов, показываем заглушку
+    if (!isAnyHourlyPosylActive) {
+        contentDiv.innerHTML = `<div class="hourly-schedule-placeholder">Хронометраж Посыла будет доступен за 7 часов до Часового Посыла и во время него</div>`;
+        return;
+    }
+
+    // Создаем таблицу
+    const table = document.createElement("table");
+    table.className = "hourly-schedule-table";
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = `
+        <th>№</th>
+        <th>Текст Посыла</th>
+        <th>Время [мск]</th>
+    `;
+    table.appendChild(headerRow);
+
+    // Заполняем таблицу всеми строками из allHourlyPosylRows
+    allHourlyPosylRows.forEach(row => {
+        const timeInterval = row["Время [мск]:"].replace(/\s*-\s*/, "-");
+        const trigger = row.triggers || "";
+        const rowElement = document.createElement("tr");
+
+        // Подсвечиваем активный интервал
+        if (currentInterval && 
+            currentInterval["Тип:"] === "часовой посыл" && 
+            currentInterval["Время [мск]:"] === row["Время [мск]:"]) {
+            rowElement.className = "active";
+        }
+
+        rowElement.innerHTML = `
+            <td>${trigger}</td>
+            <td>${row["Текст:"]}</td>
+            <td>${timeInterval}</td>
+        `;
+        table.appendChild(rowElement);
+    });
+
+    // Очищаем контейнер и добавляем таблицу
+    contentDiv.innerHTML = "";
+    contentDiv.appendChild(table);
+}
+
+
+
+
+
+
+
+
 function updateDisplay() {
     if (!window.timeInitialized) {
         messageText.innerHTML = `<span class="countdown">Ожидание инициализации времени...</span>`;
@@ -511,6 +617,7 @@ function updateDisplay() {
     let nextInterval = null;
     let hourlyPosyl = null;
     let dailyPosyl = null;
+    const hourlyRows = [];
 
     const currentDateStr = String(new Date().getDate()).padStart(2, "0");
 
@@ -546,6 +653,7 @@ function updateDisplay() {
                 if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
                     if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(currentDateStr)) {
                         hourlyPosyl = row;
+                        hourlyRows.push(row);
                     } else if (row["Тип:"] === "ежедневный посыл") {
                         dailyPosyl = row;
                     }
@@ -715,6 +823,16 @@ function updateDisplay() {
 
     adjustMessageTextSize();
     window.lastIntervalStart = currentIntervalStart;
+
+    // В конец функции updateDisplay, перед закрывающей }
+// Добавляем сортировку и вызов функции для таблицы хронометража
+hourlyRows.sort((a, b) => {
+    const timeA = a["Время [мск]:"].split("-")[0].split(":").map(Number);
+    const timeB = b["Время [мск]:"].split("-")[0].split(":").map(Number);
+    return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
+});
+generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, hourlyPosyl || null);
+
 }
 
 function adjustMessageTextSize() {
