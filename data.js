@@ -508,11 +508,9 @@ function hideSongTitle() {
 }
 
 
-// Функция для создания таблицы хронометража Часового Посыла
-// Использует allHourlyPosylRows для отображения всех интервалов за текущий день
-// Показывает таблицу только за 7 часов до или во время посыла
 function generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, currentInterval) {
     console.log("generateHourlyScheduleTable called, currentTimeInMinutes:", currentTimeInMinutes); // Отладка
+    console.log("currentInterval:", currentInterval); // Отладка текущего интервала
     const contentDiv = document.getElementById("hourly-schedule-content");
     if (!contentDiv) {
         console.error("Элемент #hourly-schedule-content не найден");
@@ -565,12 +563,14 @@ function generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, currentIn
         if (currentInterval && 
             currentInterval["Тип:"] === "часовой посыл" && 
             currentInterval["Время [мск]:"] === row["Время [мск]:"]) {
+            console.log("Applying active class to row:", row["Время [мск]:"]); // Отладка
+            console.log("currentInterval time:", currentInterval["Время [мск]:"], "row time:", row["Время [мск]:"]); // Отладка времени
             rowElement.className = "active";
         }
 
         rowElement.innerHTML = `
             <td>${trigger}</td>
-            <td>${row["Текст:"]}</td>
+            <td>${formatText(row["Текст:"])}</td>
             <td>${timeInterval}</td>
         `;
         table.appendChild(rowElement);

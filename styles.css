@@ -789,10 +789,13 @@ body.outside-posyl .quatrain-container {
 /* Стили для нового раздела Хронометраж Часового Посыла */
 .hourly-schedule-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate; /* по умолчанию separate, но важно не ставить collapse */
     margin-top: 10px;
     color: white;
     font-size: 14px;
+    border-radius: 14px;
+    overflow: hidden;   /* важно для того, чтобы внутренние ячейки не выходили за рамки */
+    
 }
 
 .hourly-schedule-table th,
@@ -800,21 +803,30 @@ body.outside-posyl .quatrain-container {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Яркий бордер */
+    border-left: 1px solid rgba(255, 255, 255, 0.1); /* Яркий бордер */
+    border-right: 1px solid rgba(255, 255, 255, 0.1); /* Яркий бордер */
+    
 }
 
 .hourly-schedule-table th {
-    background-color: rgba(100, 100, 100, 0.2);
+    background-color: rgba(50, 50, 50, 0.4); /* Более тёмный фон для заголовков */
     font-weight: bold;
 }
 
 .hourly-schedule-table td {
-    background-color: rgba(100, 100, 100, 0.1);
+    background-color: rgba(50, 50, 50, 0.3); /* Более тёмный фон для неактивных строк */
+    font-weight: bold;
 }
 
 /* Стиль для активной строки */
 .hourly-schedule-table tr.active td {
-    background-color: rgba(157, 52, 255, 0.267) !important; /* Темно-фиолетовый полупрозрачный фон */
-    color: #ffd700 !important; /* Золотой текст */
+    background-color: rgba(162, 63, 255, 0.185) !important; /* Темно-фиолетовый полупрозрачный фон */
+    color: #ffd700 !important; /* Золотой текст для всего содержимого ячейки */
+}
+
+/* Переопределяем цвет текста для span внутри активной строки */
+.hourly-schedule-table tr.active td span {
+    color: #ffd700 !important; /* Золотой цвет для всех span (purple-bold, bold-underlined, white-text) */
 }
 
 .hourly-schedule-placeholder {
@@ -826,20 +838,20 @@ body.outside-posyl .quatrain-container {
 
 /* Тема "Вне посыла" для таблицы */
 body.outside-posyl .hourly-schedule-table th {
-    background-color: rgba(180, 180, 255, 0.2);
+    background-color: rgba(120, 120, 180, 0.4); /* Более тёмный синий для заголовков */
 }
 
 body.outside-posyl .hourly-schedule-table td {
-    background-color: rgba(180, 180, 255, 0.1);
+    background-color: rgba(120, 120, 180, 0.3); /* Более тёмный синий для неактивных строк */
 }
 
 /* Тема "В посыле" для таблицы */
 body.in-posyl .hourly-schedule-table th {
-    background-color: rgba(255, 200, 200, 0.2);
+    background-color: rgba(200, 150, 150, 0.4); /* Более тёмный красный для заголовков */
 }
 
 body.in-posyl .hourly-schedule-table td {
-    background-color: rgba(255, 200, 200, 0.1);
+    background-color: rgba(32, 32, 32, 0.1); /* Более тёмный красный для неактивных строк */
 }
 
 
