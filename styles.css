@@ -815,7 +815,7 @@ body.outside-posyl .quatrain-container {
 
 .hourly-schedule-table td {
     background-color: rgba(50, 50, 50, 0.3); /* Более тёмный фон для неактивных строк */
-    font-weight: bold;
+    font-weight: 300;
 }
 
 /* Стиль для активной строки */
@@ -842,7 +842,7 @@ body.outside-posyl .hourly-schedule-table th {
 }
 
 body.outside-posyl .hourly-schedule-table td {
-    background-color: rgba(120, 120, 180, 0.3); /* Более тёмный синий для неактивных строк */
+    background-color: rgba(40, 40, 68, 0.3); /* Более тёмный синий для неактивных строк */
 }
 
 /* Тема "В посыле" для таблицы */
