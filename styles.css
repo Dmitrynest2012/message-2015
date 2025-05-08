@@ -793,6 +793,7 @@ body.outside-posyl .quatrain-container {
     margin-top: 10px;
     color: white;
     font-size: 14px;
+    font-family: 'Play';
     border-radius: 14px;
     overflow: hidden;   /* важно для того, чтобы внутренние ячейки не выходили за рамки */
     
@@ -815,7 +816,7 @@ body.outside-posyl .quatrain-container {
 
 .hourly-schedule-table td {
     background-color: rgba(50, 50, 50, 0.3); /* Более тёмный фон для неактивных строк */
-    font-weight: 300;
+    font-weight: 400;
 }
 
 /* Стиль для активной строки */
