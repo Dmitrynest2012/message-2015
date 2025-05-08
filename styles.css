@@ -1597,7 +1597,7 @@ body.in-posyl .hourly-schedule-table td {
 
 .section-content {
     padding: 15px; /* Сохраняем базовый padding */
-    max-height: 4050px; /* Увеличиваем max-height, чтобы вместить весь контент */
+    max-height: 6050px; /* Увеличиваем max-height, чтобы вместить весь контент */
     overflow-y: hidden; /* Оставляем запрет скролла */
     transition: all 0.4s ease-in-out;
     opacity: 1;
