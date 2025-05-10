@@ -13,26 +13,53 @@ let currentMonth = 0;
 let currentYear = 0;
 let timeInitialized = false;
 
+// Список API для получения времени
+const timeAPIs = [
+    "https://worldtimeapi.org/api/timezone/Etc/UTC",
+    "https://timeapi.io/api/Time/current/zone?timeZone=Etc/UTC",
+    "http://worldclockapi.com/api/json/utc/now"
+];
+
 async function fetchTimeFromAPI() {
-    try {
-        const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC");
-        if (!response.ok) {
-            if (response.status === 429) {
-                // Логирование удалено
+    for (const api of timeAPIs) {
+        try {
+            const response = await fetch(api);
+            if (!response.ok) {
+                if (response.status === 429) {
+                    // Логирование удалено
+                }
+                throw new Error(`HTTP error ${response.status} from ${api}`);
             }
-            throw new Error(`HTTP error ${response.status}`);
+            const data = await response.json();
+            let utcTime;
+
+            // Обработка данных в зависимости от API
+            if (api.includes("worldtimeapi.org")) {
+                if (data.datetime) {
+                    utcTime = new Date(data.datetime);
+                }
+            } else if (api.includes("timeapi.io")) {
+                if (data.dateTime) {
+                    utcTime = new Date(data.dateTime);
+                }
+            } else if (api.includes("worldclockapi.com")) {
+                if (data.currentDateTime) {
+                    utcTime = new Date(data.currentDateTime);
+                }
+            }
+
+            if (utcTime) {
+                const moscowTime = new Date(utcTime.getTime() + 3 * 3600000);
+                updateGlobalTime(moscowTime);
+                return; // Успешно получили время, выходим
+            }
+        } catch (error) {
+            // Логирование удалено
+            continue; // Пробуем следующий API
         }
-        const data = await response.json();
-        if (data.datetime) {
-            const utcTime = new Date(data.datetime);
-            const moscowTime = new Date(utcTime.getTime() + 3 * 3600000);
-            updateGlobalTime(moscowTime);
-        } else {
-            useLocalUTC();
-        }
-    } catch (error) {
-        useLocalUTC();
     }
+    // Если ни один API не сработал, используем локальное время
+    useLocalUTC();
 }
 
 function useLocalUTC() {
