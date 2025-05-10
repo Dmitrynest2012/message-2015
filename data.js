@@ -556,6 +556,22 @@ function generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, currentIn
     // Заполняем таблицу всеми строками из allHourlyPosylRows
     allHourlyPosylRows.forEach(row => {
         const timeInterval = row["Время [мск]:"].replace(/\s*-\s*/, "-");
+        const [startTime, endTime] = timeInterval.split("-");
+        const [endHour, endMinute] = endTime.split(":").map(Number);
+
+        // Добавляем 1 минуту к времени окончания для отображения
+        let newEndMinute = endMinute + 1;
+        let newEndHour = endHour;
+        if (newEndMinute >= 60) {
+            newEndMinute = 0;
+            newEndHour = endHour + 1;
+            if (newEndHour >= 24) {
+                newEndHour = 0; // Учитываем переход через полночь
+            }
+        }
+        const displayEndTime = `${String(newEndHour).padStart(2, "0")}:${String(newEndMinute).padStart(2, "0")}`;
+        const displayTimeInterval = `${startTime}-${displayEndTime}`;
+
         const trigger = row.triggers || "";
         const rowElement = document.createElement("tr");
 
@@ -571,7 +587,7 @@ function generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, currentIn
         rowElement.innerHTML = `
             <td>${trigger}</td>
             <td>${formatText(row["Текст:"])}</td>
-            <td>${timeInterval}</td>
+            <td>${displayTimeInterval}</td>
         `;
         table.appendChild(rowElement);
     });
