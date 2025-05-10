@@ -219,16 +219,15 @@ async function fetchExcelFile() {
     lastModified = currentLastModified;
     lastContentHash = newContentHash;
 
-    // Новый код: заполняем allHourlyPosylRows всеми интервалами Часового Посыла за текущий день
-    const currentDateStr = String(new Date().getDate()).padStart(2, "0");
+    // Используем window.currentDateStr вместо локальной даты
     allHourlyPosylRows = jsonData.filter(row => {
         if (row["Тип:"] !== "часовой посыл") return false;
         try {
             const datesArray = JSON.parse(row["Дата [мск]:"]);
-            return Array.isArray(datesArray) && datesArray.includes(currentDateStr);
+            return Array.isArray(datesArray) && datesArray.includes(window.currentDateStr);
         } catch (error) {
             console.error("Ошибка парсинга даты в allHourlyPosylRows:", error);
-            return row["Дата [мск]:"].includes(currentDateStr);
+            return row["Дата [мск]:"].includes(window.currentDateStr);
         }
     });
 
@@ -238,7 +237,6 @@ async function fetchExcelFile() {
         const timeB = b["Время [мск]:"].split("-")[0].split(":").map(Number);
         return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
     });
-
 
     processExcelData();
 }
@@ -304,13 +302,12 @@ function showNotification() {
 
 function processExcelData() {
     let newPosylType = "Ежедневные Посылы";
-    const currentDate = String(new Date().getDate()).padStart(2, "0");
 
     jsonData.forEach(row => {
         if (row["Дата [мск]:"] && row["Тип:"] === "часовой посыл") {
             try {
                 let datesArray = JSON.parse(row["Дата [мск]:"]);
-                if (Array.isArray(datesArray) && datesArray.includes(currentDate)) {
+                if (Array.isArray(datesArray) && datesArray.includes(window.currentDateStr)) {
                     newPosylType = "Ежедневные + часовой Посыл";
                 }
             } catch (error) {
@@ -329,7 +326,7 @@ function processExcelData() {
         window.posylType = posylType;
         localStorage.setItem("posylType", posylType);
 
-        const newText = `Сегодня ${posylType}. ${currentDate}.${String(currentMonth).padStart(2, "0")}.${currentYear}`;
+        const newText = `Сегодня ${posylType}. ${window.currentDateStr}.${String(currentMonth).padStart(2, "0")}.${currentYear}`;
         const isTextLonger = newText.length > oldText.length;
 
         dateElement.classList.add(isTextLonger ? "date-expanding" : "date-shrinking");
@@ -611,7 +608,6 @@ function updateDisplay() {
             updateImage(outsidePosylImages[0]);
             lastImageSrc = outsidePosylImages[0];
         }
-        // Явно устанавливаем тему "вне посыла"
         document.body.classList.remove("in-posyl");
         document.body.classList.add("outside-posyl");
         progressLine.style.width = "0%";
@@ -623,7 +619,7 @@ function updateDisplay() {
 
     const currentHour = window.currentHours;
     const currentMinute = window.currentMinutes;
-    const currentSecond = window.currentSeconds;
+    currentSecond = window.currentSeconds;
 
     const currentTimeInMinutes = currentHour * 60 + currentMinute;
     const currentTotalSeconds = currentHour * 3600 + currentMinute * 60 + currentSecond;
@@ -634,8 +630,6 @@ function updateDisplay() {
     let hourlyPosyl = null;
     let dailyPosyl = null;
     const hourlyRows = [];
-
-    const currentDateStr = String(new Date().getDate()).padStart(2, "0");
 
     if (jsonData.length === 0) {
         messageText.innerHTML = `<span class="countdown">Ошибка: данные не загружены</span>`;
@@ -667,7 +661,7 @@ function updateDisplay() {
                 const endTimeInMinutes = endHour * 60 + endMinute;
 
                 if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
-                    if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(currentDateStr)) {
+                    if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(window.currentDateStr)) {
                         hourlyPosyl = row;
                         hourlyRows.push(row);
                     } else if (row["Тип:"] === "ежедневный посыл") {
@@ -683,7 +677,7 @@ function updateDisplay() {
                     if (row["Тип:"] === "часовой посыл") {
                         try {
                             const datesArray = JSON.parse(row["Дата [мск]:"]);
-                            isIntervalActiveToday = Array.isArray(datesArray) && datesArray.includes(currentDateStr);
+                            isIntervalActiveToday = Array.isArray(datesArray) && datesArray.includes(window.currentDateStr);
                         } catch (error) {
                             console.error("Ошибка парсинга даты:", error);
                             isIntervalActiveToday = false;

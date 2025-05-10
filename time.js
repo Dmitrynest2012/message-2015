@@ -48,6 +48,8 @@ function updateGlobalTime(time) {
     currentDay = time.getUTCDate();
     currentMonth = time.getUTCMonth() + 1;
     currentYear = time.getUTCFullYear();
+    // Форматируем текущий день по Москве как двухзначную строку
+    window.currentDateStr = String(currentDay).padStart(2, "0");
     updateClock();
     updateDate();
     timeInitialized = true;
