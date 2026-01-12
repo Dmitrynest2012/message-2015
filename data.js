@@ -29,9 +29,6 @@ let notificationAudio;
 let lastUpdateTime = null;
 let isUserActive = false;
 
-// Новая глобальная переменная для хранения всех интервалов Часового Посыла за текущий день
-let allHourlyPosylRows = [];
-
 document.addEventListener("DOMContentLoaded", () => {
     messageText = document.getElementById("message-text");
     imageElement = document.getElementById("dynamic-image");
@@ -195,8 +192,26 @@ function computeHash(data) {
 }
 
 async function fetchExcelFile() {
-    const response = await fetch('data-message.xlsx', { cache: "no-store" });
+    const headers = {};
+    if (lastContentHash) {
+        // Пробуем оба популярных формата: с кавычками и без
+        headers["If-None-Match"] = `"${lastContentHash}"`;
+        // Если сервер отдаёт без кавычек → можно добавить альтернативу ниже, но обычно кавычки требуются
+        // headers["If-None-Match"] = lastContentHash;  // ← раскомментировать, если 304 не приходит
+    }
+
+    const response = await fetch('data-message.xlsx', {
+        cache: "no-cache",  // ← важно: не брать старый кэш браузера
+        headers
+    });
+
+    if (response.status === 304) {
+        console.log("Файл не изменился (304 Not Modified)");
+        return;  // ничего не делаем — данные уже актуальны
+    }
+
     if (!response.ok) throw new Error(`Не удалось загрузить файл: ${response.status}`);
+
     const arrayBuffer = await response.arrayBuffer();
     const textDecoder = new TextDecoder("utf-8");
     const contentString = textDecoder.decode(arrayBuffer);
@@ -204,10 +219,7 @@ async function fetchExcelFile() {
 
     const currentLastModified = response.headers.get("Last-Modified") || Date.now().toString();
 
-    if (lastContentHash === null) {
-        lastContentHash = newContentHash;
-        lastUpdateTime = currentLastModified;
-    } else if (lastContentHash !== newContentHash) {
+    if (lastContentHash === null || lastContentHash !== newContentHash) {
         lastUpdateTime = currentLastModified;
         showNotification();
     }
@@ -218,31 +230,7 @@ async function fetchExcelFile() {
     jsonData = XLSX.utils.sheet_to_json(sheet);
     lastModified = currentLastModified;
     lastContentHash = newContentHash;
-
-    // Используем window.currentDateStr вместо локальной даты
-    allHourlyPosylRows = jsonData.filter(row => {
-        if (row["Тип:"] !== "часовой посыл") return false;
-        try {
-            const datesArray = JSON.parse(row["Дата [мск]:"]);
-            return Array.isArray(datesArray) && datesArray.includes(window.currentDateStr);
-        } catch (error) {
-            console.error("Ошибка парсинга даты в allHourlyPosylRows:", error);
-            return row["Дата [мск]:"].includes(window.currentDateStr);
-        }
-    });
-
-    // Сортируем allHourlyPosylRows по времени начала
-    allHourlyPosylRows.sort((a, b) => {
-        const timeA = a["Время [мск]:"].split("-")[0].split(":").map(Number);
-        const timeB = b["Время [мск]:"].split("-")[0].split(":").map(Number);
-        return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
-    });
-
     processExcelData();
-}
-
-async function checkCache() {
-    await fetchExcelFile();
 }
 
 function showNotification() {
@@ -302,12 +290,13 @@ function showNotification() {
 
 function processExcelData() {
     let newPosylType = "Ежедневные Посылы";
+    const currentDate = String(new Date().getDate()).padStart(2, "0");
 
     jsonData.forEach(row => {
         if (row["Дата [мск]:"] && row["Тип:"] === "часовой посыл") {
             try {
                 let datesArray = JSON.parse(row["Дата [мск]:"]);
-                if (Array.isArray(datesArray) && datesArray.includes(window.currentDateStr)) {
+                if (Array.isArray(datesArray) && datesArray.includes(currentDate)) {
                     newPosylType = "Ежедневные + часовой Посыл";
                 }
             } catch (error) {
@@ -326,7 +315,7 @@ function processExcelData() {
         window.posylType = posylType;
         localStorage.setItem("posylType", posylType);
 
-        const newText = `Сегодня ${posylType}. ${window.currentDateStr}.${String(currentMonth).padStart(2, "0")}.${currentYear}`;
+        const newText = `Сегодня ${posylType}. ${currentDate}.${String(currentMonth).padStart(2, "0")}.${currentYear}`;
         const isTextLonger = newText.length > oldText.length;
 
         dateElement.classList.add(isTextLonger ? "date-expanding" : "date-shrinking");
@@ -388,7 +377,6 @@ function updateImage(newSrc, retryCount = 0, maxRetries = 3) {
             }, 1000 * (retryCount + 1));
         } else {
             console.error(`Не удалось загрузить изображение после ${maxRetries} попыток: ${newSrc}`);
-            // Устанавливаем запасное изображение
             const fallbackImage = outsidePosylImages[0];
             imageElement.classList.add("fade");
             setTimeout(() => {
@@ -504,103 +492,6 @@ function hideSongTitle() {
     songTitleElement.style.display = "none";
 }
 
-
-function generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, currentInterval) {
-    console.log("generateHourlyScheduleTable called, currentTimeInMinutes:", currentTimeInMinutes); // Отладка
-    console.log("currentInterval:", currentInterval); // Отладка текущего интервала
-    const contentDiv = document.getElementById("hourly-schedule-content");
-    if (!contentDiv) {
-        console.error("Элемент #hourly-schedule-content не найден");
-        return;
-    }
-
-    // Если allHourlyPosylRows пуст, показываем заглушку
-    if (allHourlyPosylRows.length === 0) {
-        contentDiv.innerHTML = `<div class="hourly-schedule-placeholder">Хронометраж Посыла будет доступен за 7 часов до Часового Посыла и во время него</div>`;
-        return;
-    }
-
-    // Проверяем, есть ли активный или предстоящий интервал (за 7 часов до или во время посыла)
-    const isAnyHourlyPosylActive = allHourlyPosylRows.some(row => {
-        const timeInterval = row["Время [мск]:"].replace(/\s*-\s*/, "-");
-        const [startTime, endTime] = timeInterval.split("-");
-        const [startHour, startMinute] = startTime.split(":").map(Number);
-        const [endHour, endMinute] = endTime.split(":").map(Number);
-        const startTimeInMinutes = startHour * 60 + startMinute;
-        const endTimeInMinutes = endHour * 60 + endMinute;
-        // Активно, если текущее время >= начала - 7 часов И <= конца интервала
-        return currentTimeInMinutes >= startTimeInMinutes - 7 * 60 && 
-               currentTimeInMinutes <= endTimeInMinutes;
-    });
-
-    // Если нет активных или предстоящих интервалов, показываем заглушку
-    if (!isAnyHourlyPosylActive) {
-        contentDiv.innerHTML = `<div class="hourly-schedule-placeholder">Хронометраж Посыла будет доступен за 7 часов до Часового Посыла и во время него</div>`;
-        return;
-    }
-
-    // Создаем таблицу
-    const table = document.createElement("table");
-    table.className = "hourly-schedule-table";
-    const headerRow = document.createElement("tr");
-    headerRow.innerHTML = `
-        <th>№</th>
-        <th>Текст Посыла</th>
-        <th>Время [мск]</th>
-    `;
-    table.appendChild(headerRow);
-
-    // Заполняем таблицу всеми строками из allHourlyPosylRows
-    allHourlyPosylRows.forEach(row => {
-        const timeInterval = row["Время [мск]:"].replace(/\s*-\s*/, "-");
-        const [startTime, endTime] = timeInterval.split("-");
-        const [endHour, endMinute] = endTime.split(":").map(Number);
-
-        // Добавляем 1 минуту к времени окончания для отображения
-        let newEndMinute = endMinute + 1;
-        let newEndHour = endHour;
-        if (newEndMinute >= 60) {
-            newEndMinute = 0;
-            newEndHour = endHour + 1;
-            if (newEndHour >= 24) {
-                newEndHour = 0; // Учитываем переход через полночь
-            }
-        }
-        const displayEndTime = `${String(newEndHour).padStart(2, "0")}:${String(newEndMinute).padStart(2, "0")}`;
-        const displayTimeInterval = `${startTime}-${displayEndTime}`;
-
-        const trigger = row.triggers || "";
-        const rowElement = document.createElement("tr");
-
-        // Подсвечиваем активный интервал
-        if (currentInterval && 
-            currentInterval["Тип:"] === "часовой посыл" && 
-            currentInterval["Время [мск]:"] === row["Время [мск]:"]) {
-            console.log("Applying active class to row:", row["Время [мск]:"]); // Отладка
-            console.log("currentInterval time:", currentInterval["Время [мск]:"], "row time:", row["Время [мск]:"]); // Отладка времени
-            rowElement.className = "active";
-        }
-
-        rowElement.innerHTML = `
-            <td>${trigger}</td>
-            <td>${formatText(row["Текст:"])}</td>
-            <td>${displayTimeInterval}</td>
-        `;
-        table.appendChild(rowElement);
-    });
-
-    // Очищаем контейнер и добавляем таблицу
-    contentDiv.innerHTML = "";
-    contentDiv.appendChild(table);
-}
-
-
-
-
-
-
-
-
 function updateDisplay() {
     if (!window.timeInitialized) {
         messageText.innerHTML = `<span class="countdown">Ожидание инициализации времени...</span>`;
@@ -619,7 +510,7 @@ function updateDisplay() {
 
     const currentHour = window.currentHours;
     const currentMinute = window.currentMinutes;
-    currentSecond = window.currentSeconds;
+    const currentSecond = window.currentSeconds;
 
     const currentTimeInMinutes = currentHour * 60 + currentMinute;
     const currentTotalSeconds = currentHour * 3600 + currentMinute * 60 + currentSecond;
@@ -629,7 +520,8 @@ function updateDisplay() {
     let nextInterval = null;
     let hourlyPosyl = null;
     let dailyPosyl = null;
-    const hourlyRows = [];
+
+    const currentDateStr = String(new Date().getDate()).padStart(2, "0");
 
     if (jsonData.length === 0) {
         messageText.innerHTML = `<span class="countdown">Ошибка: данные не загружены</span>`;
@@ -661,9 +553,8 @@ function updateDisplay() {
                 const endTimeInMinutes = endHour * 60 + endMinute;
 
                 if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
-                    if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(window.currentDateStr)) {
+                    if (row["Тип:"] === "часовой посыл" && row["Дата [мск]:"].includes(currentDateStr)) {
                         hourlyPosyl = row;
-                        hourlyRows.push(row);
                     } else if (row["Тип:"] === "ежедневный посыл") {
                         dailyPosyl = row;
                     }
@@ -677,7 +568,7 @@ function updateDisplay() {
                     if (row["Тип:"] === "часовой посыл") {
                         try {
                             const datesArray = JSON.parse(row["Дата [мск]:"]);
-                            isIntervalActiveToday = Array.isArray(datesArray) && datesArray.includes(window.currentDateStr);
+                            isIntervalActiveToday = Array.isArray(datesArray) && datesArray.includes(currentDateStr);
                         } catch (error) {
                             console.error("Ошибка парсинга даты:", error);
                             isIntervalActiveToday = false;
@@ -775,7 +666,6 @@ function updateDisplay() {
         sendStatus = "В Посыле";
         messageText.innerHTML = formatText(sendText);
         wasInPosyl = true;
-        // Явно устанавливаем тему "в посыле"
         document.body.classList.remove("outside-posyl");
         document.body.classList.add("in-posyl");
     } else {
@@ -800,7 +690,6 @@ function updateDisplay() {
         } else {
             messageText.innerHTML = `<span class="countdown">Все посылы на сегодня завершены</span>`;
         }
-        // Явно устанавливаем тему "вне посыла"
         document.body.classList.remove("in-posyl");
         document.body.classList.add("outside-posyl");
     }
@@ -833,16 +722,6 @@ function updateDisplay() {
 
     adjustMessageTextSize();
     window.lastIntervalStart = currentIntervalStart;
-
-    // В конец функции updateDisplay, перед закрывающей }
-// Добавляем сортировку и вызов функции для таблицы хронометража
-hourlyRows.sort((a, b) => {
-    const timeA = a["Время [мск]:"].split("-")[0].split(":").map(Number);
-    const timeB = b["Время [мск]:"].split("-")[0].split(":").map(Number);
-    return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
-});
-generateHourlyScheduleTable(hourlyRows, currentTimeInMinutes, hourlyPosyl || null);
-
 }
 
 function adjustMessageTextSize() {
@@ -881,19 +760,31 @@ function checkPosylTypeAndUpdate() {
     }
 }
 
-async function checkContentChange() {
-    const response = await fetch('data-message.xlsx', { cache: "no-store" });
-    const arrayBuffer = await response.arrayBuffer();
-    const textDecoder = new TextDecoder("utf-8");
-    const contentString = textDecoder.decode(arrayBuffer);
-    const newContentHash = computeHash(contentString);
-    if (newContentHash !== lastContentHash) await fetchExcelFile();
+function getRandomDelay(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+async function scheduleUpdateCheck() {
+    try {
+        await fetchExcelFile();
+    } catch (err) {
+        console.warn("Ошибка проверки обновления файла:", err);
+    } finally {
+        // Следующая проверка через 4–6 минут (± jitter)
+        const nextDelay = getRandomDelay(240000, 360000);
+        setTimeout(scheduleUpdateCheck, nextDelay);
+    }
 }
 
 function waitForTime() {
     if (window.timeInitialized) {
         setInterval(updateDisplay, 500);
-        setInterval(checkCache, 10000);
+
+        // Запускаем первую проверку обновления через 30–90 секунд
+        const initialDelay = getRandomDelay(30000, 90000);
+        setTimeout(scheduleUpdateCheck, initialDelay);
+
+        // Смена случайной картинки вне посыла — без изменений
         setInterval(() => {
             if (sendStatus === "Вне Посыла") {
                 const randomImage = getRandomImage(outsidePosylImages);

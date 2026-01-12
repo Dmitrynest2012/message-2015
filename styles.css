@@ -782,84 +782,6 @@ body.outside-posyl .quatrain-container {
     border-color: rgba(80, 80, 150, 0.5);
 }
 
-
-
-
-
-/* Стили для нового раздела Хронометраж Часового Посыла */
-.hourly-schedule-table {
-    width: 100%;
-    border-collapse: separate; /* по умолчанию separate, но важно не ставить collapse */
-    margin-top: 10px;
-    color: white;
-    font-size: 14px;
-    font-family: 'Play';
-    border-radius: 14px;
-    overflow: hidden;   /* важно для того, чтобы внутренние ячейки не выходили за рамки */
-    
-}
-
-.hourly-schedule-table th,
-.hourly-schedule-table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Яркий бордер */
-    border-left: 1px solid rgba(255, 255, 255, 0.1); /* Яркий бордер */
-    border-right: 1px solid rgba(255, 255, 255, 0.1); /* Яркий бордер */
-    
-}
-
-.hourly-schedule-table th {
-    background-color: rgba(50, 50, 50, 0.4); /* Более тёмный фон для заголовков */
-    font-weight: bold;
-}
-
-.hourly-schedule-table td {
-    background-color: rgba(50, 50, 50, 0.3); /* Более тёмный фон для неактивных строк */
-    font-weight: 400;
-}
-
-/* Стиль для активной строки */
-.hourly-schedule-table tr.active td {
-    background-color: rgba(162, 63, 255, 0.185) !important; /* Темно-фиолетовый полупрозрачный фон */
-    color: #ffd700 !important; /* Золотой текст для всего содержимого ячейки */
-}
-
-/* Переопределяем цвет текста для span внутри активной строки */
-.hourly-schedule-table tr.active td span {
-    color: #ffd700 !important; /* Золотой цвет для всех span (purple-bold, bold-underlined, white-text) */
-}
-
-.hourly-schedule-placeholder {
-    color: white;
-    font-size: 14px;
-    text-align: center;
-    padding: 15px;
-}
-
-/* Тема "Вне посыла" для таблицы */
-body.outside-posyl .hourly-schedule-table th {
-    background-color: rgba(120, 120, 180, 0.4); /* Более тёмный синий для заголовков */
-}
-
-body.outside-posyl .hourly-schedule-table td {
-    background-color: rgba(40, 40, 68, 0.3); /* Более тёмный синий для неактивных строк */
-}
-
-/* Тема "В посыле" для таблицы */
-body.in-posyl .hourly-schedule-table th {
-    background-color: rgba(200, 150, 150, 0.4); /* Более тёмный красный для заголовков */
-}
-
-body.in-posyl .hourly-schedule-table td {
-    background-color: rgba(32, 32, 32, 0.1); /* Более тёмный красный для неактивных строк */
-}
-
-
-
-
-
-
 /* Стили для смартфонов (portrait) */
 @media (orientation: portrait) {
     .quatrain-container {
@@ -1597,7 +1519,7 @@ body.in-posyl .hourly-schedule-table td {
 
 .section-content {
     padding: 15px; /* Сохраняем базовый padding */
-    max-height: 6050px; /* Увеличиваем max-height, чтобы вместить весь контент */
+    max-height: 1050px; /* Увеличиваем max-height, чтобы вместить весь контент */
     overflow-y: hidden; /* Оставляем запрет скролла */
     transition: all 0.4s ease-in-out;
     opacity: 1;
